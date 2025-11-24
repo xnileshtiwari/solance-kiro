@@ -1,0 +1,80 @@
+[
+  {
+    "role": "user",
+    "parts": [
+      {
+        "text": "Turn the lights down to a romantic level"
+      }
+    ]
+  },
+  {
+    "role": "model",
+    "parts": [
+      {
+        "function_call": {
+          "name": "set_light_values",
+          "args": {
+            "brightness": 20,
+            "color_temp": "warm"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "role": "user",
+    "parts": [
+      {
+        "function_response": {
+          "name": "set_light_values",
+          "response": {
+            "result": {
+              "brightness": 20,
+              "colorTemperature": "warm"
+            }
+          }
+        }
+      }
+    ]
+  },
+  {
+    "role": "user",
+    "parts": [
+      {
+        "text": "order 1 kg tomatoes"
+      }
+    ]
+  },
+  {
+    "role": "user",
+    "parts": [
+      {
+        "function_response": {
+          "name": "set_light_values",
+          "response": {
+            "result": {
+              "brightness": 20,
+              "colorTemperature": "warm"
+            }
+          }
+        }
+      },
+      {
+        "function_response": {
+          "name": "order_vegetables",
+          "response": {
+            "result": "Tomato has been ordered"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "role": "user",
+    "parts": [
+      {
+        "text": "what are the things you have done? how much tomatoes ordered? have you made any mistake"
+      }
+    ]
+  }
+]
