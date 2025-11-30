@@ -62,7 +62,7 @@ const InputArea: React.FC<InputAreaProps> = ({
   }, [feedbackType]);
 
   return (
-    <div className={`w-full max-w-4xl mx-auto ${className}`}>
+    <div className={`w-full max-w-3xl mx-auto ${className}`}>
       {/* Feedback Message */}
       {feedbackMessage && (
         <div className={`mb-4 text-center transition-all duration-300 ${
@@ -93,7 +93,7 @@ const InputArea: React.FC<InputAreaProps> = ({
               onKeyPress={handleKeyPress}
               placeholder={placeholder}
               disabled={disabled}
-              className="cozy-input flex-1 px-6 py-4 disabled:cursor-not-allowed"
+              className="cozy-input flex-1 px-6 py-4 disabled:cursor-not-allowed text-center"
             />
             
             <button
@@ -112,7 +112,7 @@ const InputArea: React.FC<InputAreaProps> = ({
       </form>
 
       {/* Helper Text */}
-      <div className="text-center mt-4 text-sm text-text-coffee/60">
+      <div className="text-center mt-3 text-xs text-text-coffee/50 font-medium">
         Press Enter or click the arrow to submit your answer
       </div>
     </div>

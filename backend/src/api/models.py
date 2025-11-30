@@ -14,7 +14,7 @@ class PreviousQuestion(BaseModel):
     """Model for previous question data used in personalization."""
     question: str
     score: int
-    mistakes: List[str]
+    remarks: List[str]
 
 
 class QuestionRequest(BaseModel):
@@ -36,6 +36,7 @@ class StepsRequest(BaseModel):
     model_name: str
     question: str
     conversation_history: Optional[List[ConversationStep]] = None
+    student_answer: Optional[str] = None
 
 
 # Task 2.3: Response models for API outputs
@@ -55,7 +56,7 @@ class FinalAnswerResponse(BaseModel):
     type: str = "final_answer"
     marks: int
     tip: str
-    mistakes: Optional[List[str]]
+    remarks: Optional[List[str]]
 
 
 class ErrorResponse(BaseModel):

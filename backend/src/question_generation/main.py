@@ -9,6 +9,8 @@ import time
 load_dotenv()
 
 def generate(model, input_json):
+    print("Question generator input " + input_json)
+
     client = genai.Client(
         api_key=os.environ.get("GOOGLE_API_KEY"),
     )
@@ -55,7 +57,9 @@ def generate(model, input_json):
         contents=contents,
         config=generate_content_config,
     )
+    print("Question generator output " + response.candidates[0].content.parts[0].text)
     return response.candidates[0].content.parts[0].text
+
 
 if __name__ == "__main__":
     start_time = time.time()

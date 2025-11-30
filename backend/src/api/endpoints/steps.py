@@ -45,6 +45,10 @@ async def generate_steps_endpoint(request: StepsRequest):
                 })
             input_data["conversation_history"] = conversation_history_data
         
+        # Add student_answer if provided (scenario 3)
+        if request.student_answer:
+            input_data["student_answer"] = request.student_answer
+        
         input_json = json.dumps(input_data)
         
         # Call the existing steps generation function
@@ -70,16 +74,16 @@ async def generate_steps_endpoint(request: StepsRequest):
                 # Return final answer response
                 marks = getattr(args, "marks", 0) or args.get("marks", 0)
                 tip = getattr(args, "tip", "") or args.get("tip", "")
-                mistakes = getattr(args, "mistakes", []) or args.get("mistakes", [])
+                remarks = getattr(args, "remarks", []) or args.get("remarks", [])
                 
                 # Convert empty list to None for API consistency
-                mistakes_list = mistakes if mistakes else None
+                remarks_list = remarks if remarks else None
                 
                 return FinalAnswerResponse(
                     type="final_answer",
                     marks=marks,
                     tip=tip,
-                    mistakes=mistakes_list
+                    remarks=remarks_list
                 )
             else:
                 raise HTTPException(
@@ -94,14 +98,14 @@ async def generate_steps_endpoint(request: StepsRequest):
                     next_step=response_data["next_step"]
                 )
             elif "marks" in response_data:
-                mistakes = response_data.get("mistakes", [])
-                mistakes_list = mistakes if mistakes else None
+                remarks = response_data.get("remarks", [])
+                remarks_list = remarks if remarks else None
                 
                 return FinalAnswerResponse(
                     type="final_answer",
                     marks=response_data["marks"],
                     tip=response_data.get("tip", ""),
-                    mistakes=mistakes_list
+                    remarks=remarks_list
                 )
             else:
                 raise HTTPException(
@@ -117,14 +121,14 @@ async def generate_steps_endpoint(request: StepsRequest):
                         next_step=response_data.next_step
                     )
                 elif hasattr(response_data, 'marks'):
-                    mistakes = getattr(response_data, 'mistakes', [])
-                    mistakes_list = mistakes if mistakes else None
+                    remarks = getattr(response_data, 'remarks', [])
+                    remarks_list = remarks if remarks else None
                     
                     return FinalAnswerResponse(
                         type="final_answer",
                         marks=response_data.marks,
                         tip=getattr(response_data, 'tip', ''),
-                        mistakes=mistakes_list
+                        remarks=remarks_list
                     )
                 else:
                     raise HTTPException(

@@ -11,6 +11,8 @@ load_dotenv()
 
 
 def generate(model, input):
+    print("Steps generator input " + input)
+
     client = genai.Client(
         api_key=os.environ.get("GOOGLE_API_KEY"),
     )
@@ -46,7 +48,7 @@ def generate(model, input):
                     description="This can only be used at the end of the solution to provide results",
                     parameters=genai.types.Schema(
                         type = genai.types.Type.OBJECT,
-                        required = ["marks", "tip", "mistakes"],
+                        required = ["marks", "tip", "remarks"],
                         properties = {
                             "marks": genai.types.Schema(
                                 type = genai.types.Type.INTEGER,
@@ -56,9 +58,9 @@ def generate(model, input):
                                 type = genai.types.Type.STRING,
                                 description = "A concise personalized tip or feedback for the student",
                             ),
-                            "mistakes": genai.types.Schema(
+                            "remarks": genai.types.Schema(
                                 type = genai.types.Type.ARRAY,
-                                description = "List of mistakes made by the student, or empty array if no mistakes",
+                                description = "List of remarks made by the student, or empty array if no remarks",
                                 items = genai.types.Schema(
                                     type = genai.types.Type.STRING,
                                 ),
@@ -93,6 +95,8 @@ def generate(model, input):
         contents=contents,
         config=generate_content_config,
     )
+    print("Steps generator output " + str(response.candidates[0].content.parts[0].function_call.args))
+
 
     return response.candidates[0].content.parts[0].function_call.args
 

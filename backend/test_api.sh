@@ -13,7 +13,16 @@ curl -s -X POST http://localhost:8000/api/v1/generate-question \
     "model_name": "gemini-2.5-flash",
     "previous_questions": []
   }'
-echo -e "\n"
+echo -e "\n"app.exception_handler(HTTPException)
+async def http_exception_handler(request: Request, exc: HTTPException):
+    """Handle HTTP exceptions with consistent error format."""
+    return JSONResponse(  
+        status_code=exc.status_code,
+        content={
+            "error": f"HTTP{exc.status_code}Error",
+            "detail": exc.detail
+        }
+    )
 
 echo "3. Question Generation - With History:"
 curl -s -X POST http://localhost:8000/api/v1/generate-question \
@@ -24,7 +33,7 @@ curl -s -X POST http://localhost:8000/api/v1/generate-question \
       {
         "question": "Solve: 2x + 4 = 10",
         "score": 7,
-        "mistakes": ["Division error in final step"]
+        "remarks": ["Division error in final step"]
       }
     ]
   }'

@@ -38,20 +38,21 @@ export default function HomePage() {
 
         {/* Subheadline */}
         <p className="text-lg md:text-xl text-stone-500 max-w-2xl mb-12 font-medium leading-relaxed">
-          From <span className="text-stone-800 font-bold">Python</span> to <span className="text-stone-800 font-bold">Piano</span>, Solance smooths out the learning curve. 
-          No rigid courses. Just an adaptive path that evolves with you.
+          Solance smooths out the learning curve with an adaptive path that evolves with you.
         </p>
 
         {/* Topic Input Section */}
-        <div className="w-full max-w-2xl mb-8">
-          <TopicInput 
-            onSubmit={handleTopicSubmit}
-            placeholder={isTransitioning ? "Starting your learning journey..." : "What do you want to learn today?"}
-          />
+        <div className="w-full flex flex-col items-center mb-8">
+          <div className="w-full max-w-xl mx-auto">
+            <TopicInput 
+              onSubmit={handleTopicSubmit}
+              placeholder={isTransitioning ? "Starting your learning journey..." : "e.g., Linear Equations, Polynomials, Factoring..."}
+            />
+          </div>
           
           {/* Error Message */}
           {errorMessage && (
-            <div className="mt-4 p-4 bg-orange-50 border border-orange-200 rounded-2xl text-orange-800 text-sm">
+            <div className="mt-4 p-4 bg-orange-50 border border-orange-200 rounded-2xl text-orange-800 text-sm max-w-xl">
               {errorMessage}
               <button 
                 onClick={clearError}
@@ -73,13 +74,44 @@ export default function HomePage() {
           )}
         </div>
 
-        {/* Topic Tags */}
+        {/* Available Topics Section */}
         {!isTransitioning && (
-          <div className="mb-12">
-            <p className="text-stone-500 text-sm mb-4 font-medium">
-              Or try one of these popular topics:
-            </p>
-            <TopicTags onTagClick={handleTagClick} />
+          <div className="mb-16 w-full flex flex-col items-center">
+            {/* Current Support - Highlighted */}
+            <div className="mb-6 text-center">
+              <p className="text-sm font-semibold text-stone-500 uppercase tracking-wide mb-3">
+                Start Learning Now
+              </p>
+              <button
+                onClick={() => handleTagClick('Algebra')}
+                className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-orange-500 to-yellow-500 text-white font-bold text-lg rounded-2xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200"
+              >
+                <span>📐</span>
+                Algebra
+                <span className="text-xs bg-white/20 px-2 py-1 rounded-full">Available Now</span>
+              </button>
+            </div>
+
+            {/* Coming Soon Topics */}
+            <div className="flex flex-col items-center gap-3 mt-8">
+              <p className="text-xs font-semibold text-stone-400 uppercase tracking-wide">
+                Coming Soon
+              </p>
+              <div className="flex flex-wrap justify-center gap-3">
+                {['Calculus', 'Physics', 'Chemistry', 'Programming'].map((topic, index) => (
+                  <div
+                    key={index}
+                    className="px-4 py-2 bg-stone-100 text-stone-400 rounded-xl text-sm font-medium cursor-not-allowed"
+                    title="Coming soon!"
+                  >
+                    {topic}
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs text-stone-400 mt-2">
+                More subjects on the way! 🚀
+              </p>
+            </div>
           </div>
         )}
 
@@ -87,40 +119,40 @@ export default function HomePage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mb-16">
           {/* Step 1 */}
           <div className="hero-card p-8 text-center step-item">
-            <div className="step-icon bg-orange-100 text-orange-500 mx-auto">
+            <div className="step-icon bg-yellow-100 text-yellow-500 mx-auto">
               <Lightbulb weight="fill" />
             </div>
             <h3 className="text-xl font-bold text-stone-800 mb-3">
-              Tell us what you want to learn
+              1. Pick Any Topic
             </h3>
             <p className="text-stone-600 leading-relaxed">
-              Just type in any topic that interests you. Our AI will understand and create a personalized learning path.
+              Type what you're curious about. We generate a custom micro-path instantly.
             </p>
           </div>
 
           {/* Step 2 */}
           <div className="hero-card p-8 text-center step-item">
-            <div className="step-icon bg-green-100 text-green-500 mx-auto">
+            <div className="step-icon bg-purple-100 text-purple-500 mx-auto">
               <Target weight="fill" />
             </div>
             <h3 className="text-xl font-bold text-stone-800 mb-3">
-              Practice with guided steps
+              2. Live Adaptation
             </h3>
             <p className="text-stone-600 leading-relaxed">
-              Work through problems with intelligent hints and feedback that adapts to your learning style.
+              Struggling? We break it down. Breezing through? We ramp it up. Real-time.
             </p>
           </div>
 
           {/* Step 3 */}
           <div className="hero-card p-8 text-center step-item">
-            <div className="step-icon bg-yellow-100 text-yellow-500 mx-auto">
+            <div className="step-icon bg-pink-100 text-pink-500 mx-auto">
               <Trophy weight="fill" />
             </div>
             <h3 className="text-xl font-bold text-stone-800 mb-3">
-              Master at your own pace
+              3. Fun & Fluid
             </h3>
             <p className="text-stone-600 leading-relaxed">
-              Build confidence as you progress. No pressure, no deadlines—just steady growth toward mastery.
+              Learning shouldn't feel like work. We make the hard stuff feel cozy and doable.
             </p>
           </div>
         </div>

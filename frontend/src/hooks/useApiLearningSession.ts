@@ -1,13 +1,13 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { 
-  LearningSession, 
-  ConversationStep, 
+import {
+  LearningSession,
+  ConversationStep,
   PreviousQuestion,
   QuestionRequest,
   StepsRequest,
-  StepsResponse 
+  StepsResponse
 } from '../types';
 import { apiService, ApiError, NetworkError } from '../services';
 
@@ -16,7 +16,7 @@ interface UseApiLearningSessionReturn {
   isLoading: boolean;
   error: string | null;
   generateNewQuestion: () => Promise<void>;
-  getNextStep: () => Promise<StepsResponse | null>;
+  getNextStep: (conversationHistoryOverride?: ConversationStep[]) => Promise<StepsResponse | null>;
   addConversationStep: (step: ConversationStep) => void;
   addQuestionToHistory: (question: PreviousQuestion) => void;
   resetConversationHistory: () => void;
@@ -47,7 +47,7 @@ export function useApiLearningSession(): UseApiLearningSessionReturn {
   const generateNewQuestion = useCallback(async () => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
       const request: QuestionRequest = {
         model_name: 'gemini-2.5-flash',
@@ -55,7 +55,7 @@ export function useApiLearningSession(): UseApiLearningSessionReturn {
       };
 
       const response = await apiService.generateQuestion(request);
-      
+
       setSession(prev => ({
         ...prev,
         currentQuestion: response.question,
@@ -65,7 +65,7 @@ export function useApiLearningSession(): UseApiLearningSessionReturn {
       }));
     } catch (err) {
       console.error('Failed to generate question:', err);
-      
+
       if (err instanceof NetworkError) {
         setError('Unable to connect to the server. Please check your internet connection and try again.');
       } else if (err instanceof ApiError) {
@@ -84,7 +84,7 @@ export function useApiLearningSession(): UseApiLearningSessionReturn {
     }
   }, [session.questionHistory]);
 
-  const getNextStep = useCallback(async (): Promise<StepsResponse | null> => {
+  const getNextStep = useCallback(async (conversationHistoryOverride?: ConversationStep[]): Promise<StepsResponse | null> => {
     if (!session.currentQuestion) {
       setError('No question available. Please generate a question first.');
       return null;
@@ -92,19 +92,22 @@ export function useApiLearningSession(): UseApiLearningSessionReturn {
 
     setIsLoading(true);
     setError(null);
-    
+
+    // Use override if provided, otherwise use session state
+    const historyToUse = conversationHistoryOverride || session.conversationHistory;
+
     try {
       const request: StepsRequest = {
         model_name: 'gemini-2.5-flash',
         question: session.currentQuestion,
-        conversation_history: session.conversationHistory.length > 0 ? session.conversationHistory : undefined,
+        conversation_history: historyToUse.length > 0 ? historyToUse : undefined,
       };
 
       const response = await apiService.generateSteps(request);
       return response;
     } catch (err) {
       console.error('Failed to get next step:', err);
-      
+
       if (err instanceof NetworkError) {
         setError('Unable to connect to the server. Please check your internet connection and try again.');
       } else if (err instanceof ApiError) {

@@ -29,5 +29,5 @@ export function normalizeTopic(topic: string): string {
  * Gets a user-friendly error message for non-algebra topics
  */
 export function getNonAlgebraMessage(topic: string): string {
-  return `Great choice! For this hackathon demo, we're focusing on algebra topics. Try searching for "linear equations" or "quadratic functions" instead.`;
+  return `We love your enthusiasm! 🎉 Right now, we're perfecting the Algebra experience. Click the highlighted Algebra button below to get started, and stay tuned for ${topic} coming soon!`;
 }

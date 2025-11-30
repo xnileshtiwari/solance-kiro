@@ -15,6 +15,7 @@ interface SuccessModalProps {
   onNextChallenge: () => void;
   completionTime?: number; // in seconds
   mistakeCount?: number;
+  score?: number; // marks out of 10
   insights?: PerformanceInsight[];
   className?: string;
 }
@@ -25,6 +26,7 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
   onNextChallenge,
   completionTime = 0,
   mistakeCount = 0,
+  score = 0,
   insights = [],
   className = ''
 }) => {
@@ -79,24 +81,22 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
   if (!isVisible) return null;
 
   return (
-    <div 
+    <div
       className={`fixed inset-0 z-50 flex items-center justify-center p-4 ${className}`}
       onClick={handleBackdropClick}
     >
       {/* Backdrop */}
-      <div 
-        className={`absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300 ${
-          isAnimating ? 'opacity-100' : 'opacity-0'
-        }`}
+      <div
+        className={`absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300 ${isAnimating ? 'opacity-100' : 'opacity-0'
+          }`}
       />
-      
+
       {/* Modal Content */}
-      <div 
-        className={`relative bg-white rounded-3xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto transform transition-all duration-300 ${
-          isAnimating 
-            ? 'opacity-100 scale-100 translate-y-0' 
-            : 'opacity-0 scale-95 translate-y-4'
-        }`}
+      <div
+        className={`relative bg-white rounded-3xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto transform transition-all duration-300 ${isAnimating
+          ? 'opacity-100 scale-100 translate-y-0'
+          : 'opacity-0 scale-95 translate-y-4'
+          }`}
       >
         {/* Header */}
         <div className="relative p-8 pb-6">
@@ -106,7 +106,7 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
           >
             <X size={20} className="text-text-coffee" />
           </button>
-          
+
           {/* Success Icon */}
           <div className="text-center mb-6">
             <div className="inline-flex items-center justify-center w-20 h-20 bg-accent-sage rounded-full mb-4">
@@ -118,6 +118,21 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
             <p className="text-text-coffee/70 text-lg">
               You've successfully completed this algebra problem
             </p>
+          </div>
+        </div>
+
+        {/* Score Display */}
+        <div className="px-8 pb-6">
+          <div className="bg-gradient-to-br from-accent-sage to-green-600 rounded-3xl p-6 text-center text-white shadow-lg">
+            <div className="text-sm font-semibold uppercase tracking-wide mb-2 opacity-90">
+              Your Score
+            </div>
+            <div className="text-6xl font-bold mb-1">
+              {score}
+            </div>
+            <div className="text-2xl font-semibold opacity-90">
+              out of 10
+            </div>
           </div>
         </div>
 
@@ -150,7 +165,7 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
           </h3>
           <div className="space-y-3">
             {displayInsights.map((insight, index) => (
-              <div 
+              <div
                 key={index}
                 className="flex items-start gap-3 p-4 bg-bg-warm rounded-2xl"
               >
@@ -179,7 +194,7 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
             Next Challenge
             <ArrowRight size={20} weight="bold" />
           </button>
-          
+
           <button
             onClick={onClose}
             className="w-full mt-3 text-text-coffee/60 hover:text-text-coffee font-semibold py-2 transition-colors"

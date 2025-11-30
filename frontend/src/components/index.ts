@@ -11,3 +11,6 @@ export { default as LoadingSpinner } from './LoadingSpinner';
 export { default as ErrorBoundary } from './ErrorBoundary';
 export { ApiErrorDisplay } from './ApiErrorDisplay';
 export { ApiFallback } from './ApiFallback';
+export { BlockInterface, type BlockStep } from './BlockInterface';
+export { CozySuccessModal } from './CozySuccessModal';
+export { MathRenderer } from './MathRenderer';

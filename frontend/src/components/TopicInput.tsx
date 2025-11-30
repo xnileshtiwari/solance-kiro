@@ -36,7 +36,7 @@ export default function TopicInput({ onSubmit, placeholder = "What do you want t
     <div className="relative">
       {/* Hackathon Constraint Toast */}
       <div className={`hackathon-toast ${showToast ? 'show' : ''}`}>
-        🚀 For this hackathon, try "algebra" topics!
+        We are only supporting "algebra" as of now!
       </div>
 
       {/* Topic Input Container */}

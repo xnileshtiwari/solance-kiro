@@ -1,18 +1,17 @@
 'use client';
 
 import { useSearchParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { 
-  ProblemHeader, 
-  ChatInterface, 
-  InputArea, 
+import { useEffect, useState, useRef } from 'react';
+import {
+  ProblemHeader,
+  ChatInterface,
+  InputArea,
   SuccessModal,
-  Navigation,
   LoadingSpinner,
   ApiErrorDisplay,
   ApiFallback,
   type Message,
-  type PerformanceInsight 
+  type PerformanceInsight
 } from '../../components';
 import { useApiLearningSession, useAnswerValidation } from '../../hooks';
 import { ConversationStep, PreviousQuestion } from '../../types';
@@ -21,63 +20,76 @@ export default function ApiLearnPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const topic = searchParams.get('topic');
-  
-  const { 
-    session, 
-    isLoading, 
-    error, 
-    generateNewQuestion, 
-    getNextStep, 
-    addConversationStep, 
-    addQuestionToHistory, 
-    resetSession, 
+
+  const {
+    session,
+    isLoading,
+    error,
+    generateNewQuestion,
+    getNextStep,
+    addConversationStep,
+    addQuestionToHistory,
+    resetSession,
     markSessionComplete,
-    clearError 
+    clearError
   } = useApiLearningSession();
-  
+
   const { validateAnswer } = useAnswerValidation();
-  
+
   const [messages, setMessages] = useState<Message[]>([]);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [feedbackMessage, setFeedbackMessage] = useState('');
   const [isAnswerIncorrect, setIsAnswerIncorrect] = useState(false);
   const [isInitializing, setIsInitializing] = useState(true);
+  const [isLoadingNewQuestion, setIsLoadingNewQuestion] = useState(false);
   const [isSubmittingAnswer, setIsSubmittingAnswer] = useState(false);
   const [currentStepResponse, setCurrentStepResponse] = useState<any>(null);
-  const [useMockMode, setUseMockMode] = useState(false);
+  const [currentMarks, setCurrentMarks] = useState<number>(0);
+  const [currentRemarks, setCurrentRemarks] = useState<string[]>([]);
+
+  // Refs to prevent double calls
+  const questionInitialized = useRef(false);
+  const stepInitialized = useRef(false);
 
   // Initialize session when component mounts
   useEffect(() => {
-    if (topic && !session.currentQuestion && !useMockMode) {
+    if (topic && !session.currentQuestion && !questionInitialized.current) {
+      questionInitialized.current = true;
       setIsInitializing(true);
       clearError();
-      
+
       // Try to generate a question via API
       generateNewQuestion().then(() => {
         setIsInitializing(false);
       }).catch(() => {
         setIsInitializing(false);
+        questionInitialized.current = false; // Reset on error so user can retry
       });
     }
-  }, [topic, session.currentQuestion, generateNewQuestion, clearError, useMockMode]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [topic]);
 
   // Get initial step when question is available
   useEffect(() => {
-    if (session.currentQuestion && !useMockMode && messages.length === 0) {
+    if (session.currentQuestion && messages.length === 0 && !stepInitialized.current) {
+      stepInitialized.current = true;
       getNextStep().then((stepResponse) => {
         if (stepResponse) {
           setCurrentStepResponse(stepResponse);
           const initialMessage: Message = {
-            id: '1',
+            id: `initial-${Date.now()}`,
             type: 'tutor',
             content: stepResponse.prompt,
             timestamp: new Date()
           };
           setMessages([initialMessage]);
         }
+      }).catch(() => {
+        stepInitialized.current = false; // Reset on error so user can retry
       });
     }
-  }, [session.currentQuestion, getNextStep, messages.length, useMockMode]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session.currentQuestion]);
 
   // Redirect to homepage if no topic is provided
   useEffect(() => {
@@ -113,28 +125,35 @@ export default function ApiLearnPage() {
       // Add to conversation history
       addConversationStep(conversationStep);
 
-      // Get next step from API
-      const nextStepResponse = await getNextStep();
-      
+      // Get updated history including the new step
+      const updatedHistory = [...session.conversationHistory, conversationStep];
+
+      // Get next step from API with updated history
+      const nextStepResponse = await getNextStep(updatedHistory);
+
       if (nextStepResponse) {
         if (nextStepResponse.step_number === -1) {
           // Session complete
           markSessionComplete();
-          
-          // Add question to history with mock performance data
+
+          // Store marks and remarks from API
+          setCurrentMarks(nextStepResponse.marks || 0);
+          setCurrentRemarks(nextStepResponse.remarks || []);
+
+          // Add question to history with performance data
           const questionHistory: PreviousQuestion = {
             question: session.currentQuestion,
-            score: nextStepResponse.marks || 85,
-            mistakes: nextStepResponse.mistakes || [],
+            score: nextStepResponse.marks || 0,
+            remarks: nextStepResponse.remarks || [],
           };
           addQuestionToHistory(questionHistory);
-          
+
           setShowSuccessModal(true);
         } else {
           // Continue with next step
           setCurrentStepResponse(nextStepResponse);
           const nextMessage: Message = {
-            id: (Date.now() + 1).toString(),
+            id: `tutor-${Date.now()}`,
             type: 'tutor',
             content: nextStepResponse.prompt,
             timestamp: new Date()
@@ -155,9 +174,20 @@ export default function ApiLearnPage() {
     setShowSuccessModal(false);
     setMessages([]);
     setCurrentStepResponse(null);
-    
+
+    // Reset initialization flags for new question
+    questionInitialized.current = false;
+    stepInitialized.current = false;
+
+    // Show loading screen
+    setIsLoadingNewQuestion(true);
+
     // Generate new question
-    await generateNewQuestion();
+    try {
+      await generateNewQuestion();
+    } finally {
+      setIsLoadingNewQuestion(false);
+    }
   };
 
   const handleBackToHome = () => {
@@ -165,6 +195,10 @@ export default function ApiLearnPage() {
   };
 
   const handleRetryConnection = () => {
+    // Reset initialization flags to allow retry
+    questionInitialized.current = false;
+    stepInitialized.current = false;
+
     clearError();
     setIsInitializing(true);
     generateNewQuestion().then(() => {
@@ -174,55 +208,32 @@ export default function ApiLearnPage() {
     });
   };
 
-  const handleUseMockMode = () => {
-    setUseMockMode(true);
-    clearError();
-    
-    // Initialize with mock data
-    const mockQuestion = "Solve for x: 2x + 5 = 13";
-    const initialMessage: Message = {
-      id: '1',
-      type: 'tutor',
-      content: "Let's work through this step by step. What's the first thing you'd do to solve this equation?",
-      timestamp: new Date()
-    };
-    
-    setMessages([initialMessage]);
-    setIsInitializing(false);
-    
-    // Mock step response
-    setCurrentStepResponse({
-      step_number: 1,
-      prompt: "Let's work through this step by step. What's the first thing you'd do to solve this equation?"
-    });
-  };
+
 
   if (!topic) {
     return null; // Will redirect to homepage
   }
 
   // Show API fallback if there's a connection error during initialization
-  if (error && isInitializing && !useMockMode) {
+  if (error && isInitializing) {
     return (
       <ApiFallback
         onRetry={handleRetryConnection}
         onGoHome={handleBackToHome}
-        showMockOption={true}
-        onUseMock={handleUseMockMode}
-        message="We're having trouble connecting to our AI tutoring service. You can try again or continue with demo mode."
+        showMockOption={false}
+        message="We're having trouble connecting to our AI tutoring service. Please try again."
       />
     );
   }
 
-  // Show loading state during initialization
-  if (isInitializing) {
+  // Show loading state during initialization or when loading new question
+  if (isInitializing || isLoadingNewQuestion) {
     return (
       <div className="min-h-screen flex flex-col bg-background-cream">
-        <Navigation showBackButton onBackClick={handleBackToHome} />
         <div className="flex-1 flex items-center justify-center">
-          <LoadingSpinner 
-            size="lg" 
-            message={useMockMode ? "Setting up demo mode..." : "Preparing your algebra challenge..."}
+          <LoadingSpinner
+            size="lg"
+            message="Preparing your algebra challenge..."
             className="text-center"
           />
         </div>
@@ -246,8 +257,7 @@ export default function ApiLearnPage() {
   return (
     <div className="min-h-screen flex flex-col bg-background-cream">
       {/* Navigation */}
-      <Navigation showBackButton onBackClick={handleBackToHome} />
-      
+
       {/* API Error Display */}
       {error && !isInitializing && (
         <div className="w-full px-4 py-2">
@@ -255,26 +265,19 @@ export default function ApiLearnPage() {
             error={error}
             onRetry={handleRetryConnection}
             onDismiss={clearError}
-            showRetry={!useMockMode}
+            showRetry={true}
           />
         </div>
       )}
-      
+
       {/* Problem Header */}
       <div className="w-full px-4 py-6">
-        <ProblemHeader 
+        <ProblemHeader
           question={session.currentQuestion || "Loading question..."}
           missionNumber={1}
         />
-        
-        {/* Mock Mode Indicator */}
-        {useMockMode && (
-          <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-2xl">
-            <p className="text-sm text-blue-800 text-center">
-              🎭 Demo Mode - Using sample content
-            </p>
-          </div>
-        )}
+
+
       </div>
 
       {/* Chat Interface */}
@@ -301,7 +304,8 @@ export default function ApiLearnPage() {
           onNextChallenge={handleNextChallenge}
           insights={mockPerformanceInsights}
           completionTime={120}
-          mistakeCount={1}
+          mistakeCount={currentRemarks.length}
+          score={currentMarks}
         />
       )}
     </div>

@@ -45,7 +45,7 @@ export const mockStepData: Record<string, StepData[]> = {
       successMessage: "Perfect! The equation checks out: 2(4) + 5 = 8 + 5 = 13. You've successfully solved for x!"
     }
   ],
-  
+
   "Simplify: 3(x + 4) - 2x": [
     {
       stepNumber: 1,
@@ -114,17 +114,17 @@ export const mockPerformanceData: PreviousQuestion[] = [
   {
     question: "Solve for x: x + 3 = 7",
     score: 100,
-    mistakes: []
+    remarks: []
   },
   {
     question: "Solve for y: 2y = 10",
     score: 85,
-    mistakes: ["Initially wrote 2y = 5"]
+    remarks: ["Initially wrote 2y = 5"]
   },
   {
     question: "Simplify: 2x + 3x",
     score: 100,
-    mistakes: []
+    remarks: []
   }
 ];
 

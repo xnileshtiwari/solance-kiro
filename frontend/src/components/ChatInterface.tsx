@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import { ConversationStep } from '@/types';
+import { Sparkle } from '@phosphor-icons/react';
 
 interface Message {
   id: string;
@@ -24,16 +25,16 @@ const TutorMessage: React.FC<{ content: string; isNew?: boolean }> = ({
       <div className="bubble-card max-w-2xl">
         <div className="flex items-start gap-4">
           {/* Tutor Avatar */}
-          <div className="w-12 h-12 bg-accent-sage rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
-            S
+          <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center text-white flex-shrink-0 shadow-md">
+            <Sparkle size={24} weight="fill" />
           </div>
           
           {/* Message Content */}
           <div className="flex-1">
-            <div className="font-bold text-text-coffee mb-2 text-sm">
+            <div className="font-bold text-stone-700 mb-2 text-sm">
               Solance Tutor
             </div>
-            <div className="text-text-coffee leading-relaxed">
+            <div className="text-stone-600 leading-relaxed text-base font-normal">
               {content}
             </div>
           </div>
@@ -73,7 +74,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   }, [messages]);
 
   return (
-    <div className={`w-full max-w-4xl mx-auto ${className}`}>
+    <div className={`w-full max-w-3xl mx-auto ${className}`}>
       <div className="space-y-0">
         {messages.map((message, index) => {
           const isNew = index === messages.length - 1;

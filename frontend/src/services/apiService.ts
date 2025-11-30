@@ -1,9 +1,9 @@
-import { 
-  QuestionRequest, 
-  QuestionResponse, 
-  StepsRequest, 
+import {
+  QuestionRequest,
+  QuestionResponse,
+  StepsRequest,
   StepsResponse,
-  ConversationStep 
+  ConversationStep
 } from '../types';
 
 // API Configuration
@@ -60,7 +60,7 @@ async function makeRequest<T>(
     // Handle HTTP errors
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      
+
       // Handle rate limiting with retry
       if (response.status === 429 || response.status === 503) {
         if (retryCount < RETRY_CONFIG.maxRetries) {
@@ -69,7 +69,7 @@ async function makeRequest<T>(
           return makeRequest<T>(url, options, retryCount + 1);
         }
       }
-      
+
       throw new ApiError(
         errorData.detail || `HTTP ${response.status}: ${response.statusText}`,
         response.status,
@@ -88,7 +88,7 @@ async function makeRequest<T>(
       }
       throw new NetworkError('Failed to connect to the server. Please check your internet connection.');
     }
-    
+
     // Re-throw ApiError and other known errors
     throw error;
   }
@@ -109,11 +109,14 @@ export class ApiService {
    */
   async generateQuestion(request: QuestionRequest): Promise<QuestionResponse> {
     const url = `${API_BASE_URL}/api/v1/generate-question`;
-    
-    const requestBody = {
-      model_name: request.model_name || DEFAULT_MODEL_NAME,
-      previous_questions: request.previous_questions || [],
-    };
+
+    // For first question, send empty object with model_name. For subsequent, include previous_questions
+    const requestBody = request.previous_questions.length > 0
+      ? {
+        model_name: request.model_name || DEFAULT_MODEL_NAME,
+        previous_questions: request.previous_questions
+      }
+      : { model_name: request.model_name || DEFAULT_MODEL_NAME };
 
     try {
       const response = await makeRequest<QuestionResponse>(url, {
@@ -133,12 +136,22 @@ export class ApiService {
    */
   async generateSteps(request: StepsRequest): Promise<StepsResponse> {
     const url = `${API_BASE_URL}/api/v1/generate-steps`;
-    
-    const requestBody = {
+
+    // Always include model_name and question
+    const requestBody: any = {
       model_name: request.model_name || DEFAULT_MODEL_NAME,
       question: request.question,
-      conversation_history: request.conversation_history || undefined,
     };
+
+    // Add conversation_history if present (assist mode)
+    if (request.conversation_history && request.conversation_history.length > 0) {
+      requestBody.conversation_history = request.conversation_history;
+    }
+
+    // Add student_answer if present (normal mode)
+    if (request.student_answer) {
+      requestBody.student_answer = request.student_answer;
+    }
 
     try {
       const response = await makeRequest<any>(url, {
@@ -156,9 +169,10 @@ export class ApiService {
         // For final answer, we'll return a special completion message
         return {
           step_number: -1, // Special indicator for completion
-          prompt: `Great job! You've completed this problem. ${response.tip}`,
+          prompt: `Great job! You've completed this problem.`,
           marks: response.marks,
-          mistakes: response.mistakes,
+          remarks: response.remarks,
+          tip: response.tip,
         };
       } else {
         throw new ApiError('Invalid response format from steps API', 500);

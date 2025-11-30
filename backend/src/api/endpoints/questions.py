@@ -36,7 +36,7 @@ async def generate_question_endpoint(request: QuestionRequest):
                 previous_questions_data.append({
                     "question": pq.question,
                     "score": pq.score,
-                    "mistakes": pq.mistakes
+                    "remarks": pq.remarks
                 })
             
             input_data = {

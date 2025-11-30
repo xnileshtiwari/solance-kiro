@@ -7,7 +7,7 @@ export interface QuestionRequest {
 export interface PreviousQuestion {
   question: string;
   score: number;
-  mistakes: string[];
+  remarks: string[];
 }
 
 export interface QuestionResponse {
@@ -18,6 +18,7 @@ export interface StepsRequest {
   model_name: string;
   question: string;
   conversation_history?: ConversationStep[];
+  student_answer?: string;
 }
 
 export interface ConversationStep {
@@ -30,7 +31,8 @@ export interface StepsResponse {
   step_number: number;
   prompt: string;
   marks?: number;
-  mistakes?: string[];
+  remarks?: string[];
+  tip?: string;
 }
 
 // Learning Session State Types
