@@ -11,11 +11,15 @@ import {
 } from '../types';
 import { apiService, ApiError, NetworkError } from '../services';
 
+interface UseApiLearningSessionOptions {
+  modelName?: string;
+}
+
 interface UseApiLearningSessionReturn {
   session: LearningSession;
   isLoading: boolean;
   error: string | null;
-  generateNewQuestion: () => Promise<void>;
+  generateNewQuestion: (subjectId: string) => Promise<void>;
   getNextStep: (conversationHistoryOverride?: ConversationStep[]) => Promise<StepsResponse | null>;
   addConversationStep: (step: ConversationStep) => void;
   addQuestionToHistory: (question: PreviousQuestion) => void;
@@ -25,6 +29,7 @@ interface UseApiLearningSessionReturn {
   markSessionComplete: () => void;
   updateCurrentStep: (stepNumber: number) => void;
   clearError: () => void;
+  currentLevel: number;
 }
 
 const initialSession: LearningSession = {
@@ -35,27 +40,40 @@ const initialSession: LearningSession = {
   isComplete: false,
 };
 
-export function useApiLearningSession(): UseApiLearningSessionReturn {
+const USER_ID = process.env.NEXT_PUBLIC_USER_ID || 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11';
+const DEFAULT_MODEL = 'gemini-2.5-flash';
+
+export function useApiLearningSession(options: UseApiLearningSessionOptions = {}): UseApiLearningSessionReturn {
+  const { modelName = DEFAULT_MODEL } = options;
   const [session, setSession] = useState<LearningSession>(initialSession);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [currentLevel, setCurrentLevel] = useState<number>(1);
 
   const clearError = useCallback(() => {
     setError(null);
   }, []);
 
-  const generateNewQuestion = useCallback(async () => {
+  const generateNewQuestion = useCallback(async (subjectId: string) => {
     setIsLoading(true);
     setError(null);
 
     try {
+      // Only send the last previous question (if any)
+      const lastQuestion = session.questionHistory.length > 0
+        ? [session.questionHistory[session.questionHistory.length - 1]]
+        : [];
+
       const request: QuestionRequest = {
-        model_name: 'gemini-2.5-flash',
-        previous_questions: session.questionHistory,
+        model_name: modelName,
+        user_id: USER_ID,
+        subject_id: subjectId,
+        previous_questions: lastQuestion,
       };
 
       const response = await apiService.generateQuestion(request);
 
+      setCurrentLevel(response.level || 1);
       setSession(prev => ({
         ...prev,
         currentQuestion: response.question,
@@ -82,7 +100,7 @@ export function useApiLearningSession(): UseApiLearningSessionReturn {
     } finally {
       setIsLoading(false);
     }
-  }, [session.questionHistory]);
+  }, [session.questionHistory, modelName]);
 
   const getNextStep = useCallback(async (conversationHistoryOverride?: ConversationStep[]): Promise<StepsResponse | null> => {
     if (!session.currentQuestion) {
@@ -98,7 +116,7 @@ export function useApiLearningSession(): UseApiLearningSessionReturn {
 
     try {
       const request: StepsRequest = {
-        model_name: 'gemini-2.5-flash',
+        model_name: modelName,
         question: session.currentQuestion,
         conversation_history: historyToUse.length > 0 ? historyToUse : undefined,
       };
@@ -125,7 +143,7 @@ export function useApiLearningSession(): UseApiLearningSessionReturn {
     } finally {
       setIsLoading(false);
     }
-  }, [session.currentQuestion, session.conversationHistory]);
+  }, [session.currentQuestion, session.conversationHistory, modelName]);
 
   const addConversationStep = useCallback((step: ConversationStep) => {
     setSession(prev => ({
@@ -161,7 +179,7 @@ export function useApiLearningSession(): UseApiLearningSessionReturn {
       }));
     } else {
       // Generate new question via API
-      generateNewQuestion();
+      generateNewQuestion('default-subject');
     }
   }, [generateNewQuestion]);
 
@@ -198,5 +216,6 @@ export function useApiLearningSession(): UseApiLearningSessionReturn {
     markSessionComplete,
     updateCurrentStep,
     clearError,
+    currentLevel,
   };
 }

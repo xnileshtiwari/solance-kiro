@@ -5,11 +5,13 @@ import React from 'react';
 interface ProblemHeaderProps {
   question: string;
   missionNumber?: number;
+  missionLabel?: string;
 }
 
 const ProblemHeader: React.FC<ProblemHeaderProps> = ({ 
   question, 
-  missionNumber = 1 
+  missionNumber = 1,
+  missionLabel = 'Mission'
 }) => {
   return (
     <div className="w-full max-w-3xl mx-auto">
@@ -18,7 +20,7 @@ const ProblemHeader: React.FC<ProblemHeaderProps> = ({
         <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm border-2 border-white rounded-full px-6 py-2.5 shadow-md">
           <div className="w-2.5 h-2.5 bg-accent-coral rounded-full animate-pulse"></div>
           <span className="font-bold text-text-coffee text-xs tracking-wider uppercase">
-            Mission {missionNumber}
+            {missionLabel} {missionNumber}
           </span>
         </div>
       </div>

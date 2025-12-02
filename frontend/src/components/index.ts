@@ -1,4 +1,5 @@
 export { default as Navigation } from './Navigation';
+export { default as SolanceHeader } from './SolanceHeader';
 export { default as FloatingBlobs } from './FloatingBlobs';
 export { default as HomePage } from './HomePage';
 export { default as TopicInput } from './TopicInput';
@@ -14,3 +15,5 @@ export { ApiFallback } from './ApiFallback';
 export { BlockInterface, type BlockStep } from './BlockInterface';
 export { CozySuccessModal } from './CozySuccessModal';
 export { MathRenderer } from './MathRenderer';
+export { default as SubjectCard, SubjectCardSkeleton } from './SubjectCard';
+export * from './learn';

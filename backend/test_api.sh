@@ -7,28 +7,24 @@ curl -s http://localhost:8000/health
 echo -e "\n"
 
 echo "2. Question Generation - First Time User:"
-curl -s -X POST http://localhost:8000/api/v1/generate-question \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model_name": "gemini-2.5-flash",
-    "previous_questions": []
-  }'
-echo -e "\n"app.exception_handler(HTTPException)
-async def http_exception_handler(request: Request, exc: HTTPException):
-    """Handle HTTP exceptions with consistent error format."""
-    return JSONResponse(  
-        status_code=exc.status_code,
-        content={
-            "error": f"HTTP{exc.status_code}Error",
-            "detail": exc.detail
-        }
-    )
 
-echo "3. Question Generation - With History:"
+
+curl -X POST "http://localhost:8000/api/v1/generate-question" \
+     -H "Content-Type: application/json" \
+     -d '{
+           "model_name": "gemini-2.5-flash",
+           "user_id": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
+           "subject_id": "wtle4d",
+           "previous_questions": []
+         }'
+         
+
 curl -s -X POST http://localhost:8000/api/v1/generate-question \
   -H "Content-Type: application/json" \
   -d '{
     "model_name": "gemini-2.5-flash",
+    "user_id": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
+    "subject_id": "wtle4d",
     "previous_questions": [
       {
         "question": "Solve: 2x + 4 = 10",
@@ -37,7 +33,34 @@ curl -s -X POST http://localhost:8000/api/v1/generate-question \
       }
     ]
   }'
-echo -e "\n"
+
+
+
+
+
+
+
+echo "3. Question Generation - With History:"
+
+
+curl -s -X POST http://localhost:8000/api/v1/generate-question \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model_name": "gemini-2.5-flash",
+    "user_id": "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
+    "subject_id": "wtle4d",
+    "previous_questions": [
+      {
+        "question": "Solve: 2x + 4 = 10",
+        "score": 7,
+        "remarks": ["Division error in final step"]
+      }
+    ]
+  }'
+
+
+
+
 
 echo "4. Steps Generation - Initial Step:"
 curl -s -X POST http://localhost:8000/api/v1/generate-steps \
@@ -47,6 +70,10 @@ curl -s -X POST http://localhost:8000/api/v1/generate-steps \
     "question": "Solve for x: 2x + 4 = 10"
   }'
 echo -e "\n"
+
+
+
+
 
 echo "5. Steps Generation - With Conversation History:"
 curl -s -X POST http://localhost:8000/api/v1/generate-steps \
@@ -62,6 +89,36 @@ curl -s -X POST http://localhost:8000/api/v1/generate-steps \
       }
     ]
   }'
-echo -e "\n"
 
-echo "=== API Testing Complete ==="
+
+
+curl -X POST "http://localhost:8000/api/v1/subjects" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "meta": {
+      "display_name": "Advanced Algebra",
+      "subject": "mathematics",
+      "description": "Advanced algebraic concepts including quadratic equations and polynomials",
+      "created_by": "user_nilesh123",
+      "public": false
+    },
+    "curriculum": [
+      {
+        "level": 1,
+        "name": "Basic Equations",
+        "concepts": ["Linear equations", "Simple factoring"],
+        "question_style": "Multiple Choice"
+      },
+      {
+        "level": 2,
+        "name": "Quadratic Equations",
+        "concepts": ["Quadratic formula", "Completing the square"],
+        "question_style": "Problem Solving"
+      }
+    ]
+  }'
+
+
+
+
+curl -X GET "http://localhost:8000/api/v1/subjects?user_id=YOUR_USER_ID"

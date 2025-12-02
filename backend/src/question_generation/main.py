@@ -2,14 +2,35 @@ import base64
 import os
 from google import genai
 from google.genai import types
-from .question_prompt import question_generator_prompt
+from src.question_generation.question_prompt import question_generator_prompt
 from dotenv import load_dotenv
 import time
+from src.database.user_questions import SolanceMemory
+from src.database.gene_question import get_subject_details        
+
 
 load_dotenv()
 
-def generate(model, input_json):
-    print("Question generator input " + input_json)
+def generate(model, input_json, user_id, subject_id):
+
+    memory = SolanceMemory(user_id, subject_id) 
+    history = memory.get_history_for_llm()
+    
+    if input_json and isinstance(input_json, dict) and 'question' in input_json:
+        # Map marks/score if needed
+        score = input_json.get('marks', input_json.get('score', 0))
+        
+        memory.save_interaction(
+            question=input_json.get('question', ''),
+            score=score,
+            remarks=input_json.get('remarks', [])
+        )
+        history.append(input_json)
+
+    cartridge = get_subject_details(subject_id) 
+
+    
+    print(f"Question generator input: {input_json} {history}")
 
     client = genai.Client(
         api_key=os.environ.get("GOOGLE_API_KEY"),
@@ -20,7 +41,7 @@ def generate(model, input_json):
         types.Content(
             role="user",
             parts=[
-                types.Part.from_text(text=input_json),
+                types.Part.from_text(text=str(input_json)),
             ],
         ),
     ]
@@ -40,15 +61,18 @@ def generate(model, input_json):
         response_mime_type="application/json",
         response_schema=genai.types.Schema(
             type = genai.types.Type.OBJECT,
-            required = ["question"],
+            required = ["question", "level"],
             properties = {
                 "question": genai.types.Schema(
                     type = genai.types.Type.STRING,
                 ),
+                "level": genai.types.Schema(
+                    type = genai.types.Type.INTEGER,
+                ),
             },
         ),
         system_instruction=[
-            types.Part.from_text(text=f"{question_generator_prompt}"),
+            types.Part.from_text(text=question_generator_prompt(cartridge, history)),
         ],
     )
 
@@ -63,7 +87,7 @@ def generate(model, input_json):
 
 if __name__ == "__main__":
     start_time = time.time()
-    a = generate(model="gemini-2.5-flash", input_json="no data")
+    a = generate(model="gemini-2.5-flash", input_json={}, user_id="a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11", subject_id="wtle4d")
     print(a)
     end_time = time.time()
     print(end_time - start_time)

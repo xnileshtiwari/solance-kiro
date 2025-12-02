@@ -16,7 +16,7 @@ router = APIRouter(prefix="/api/v1", tags=["questions"])
 @router.post("/generate-question", response_model=QuestionResponse)
 async def generate_question_endpoint(request: QuestionRequest):
     """
-    Generate a personalized algebra question based on student performance history.
+    Generate a personalized question based on student performance history.
     
     Args:
         request: QuestionRequest containing model_name and previous_questions
@@ -30,31 +30,25 @@ async def generate_question_endpoint(request: QuestionRequest):
     try:
         # Prepare input JSON for the existing generate function
         if request.previous_questions:
-            # Convert previous questions to the format expected by the existing module
-            previous_questions_data = []
-            for pq in request.previous_questions:
-                previous_questions_data.append({
-                    "question": pq.question,
-                    "score": pq.score,
-                    "remarks": pq.remarks
-                })
-            
-            input_data = {
-                "previous_questions": previous_questions_data
+            # Get the last question to save and use as context
+            last_pq = request.previous_questions[-1]
+            input_json = {
+                "question": last_pq.question,
+                "marks": last_pq.score,  # Map score to marks as expected by main.py
+                "remarks": last_pq.remarks
             }
-            input_json = json.dumps(input_data)
         else:
             # Handle empty previous_questions array for first-time users
-            input_json = "no data"
+            input_json = {}
         
         # Call the existing question generation function
-        response_text = generate_question(request.model_name, input_json)
+        response_text = generate_question(request.model_name, input_json, request.user_id, request.subject_id)
         
         # Parse the JSON response
         response_data = json.loads(response_text)
         
         # Return the formatted response
-        return QuestionResponse(question=response_data["question"])
+        return QuestionResponse(question=response_data["question"], level=response_data["level"])
         
     except json.JSONDecodeError as e:
         raise HTTPException(

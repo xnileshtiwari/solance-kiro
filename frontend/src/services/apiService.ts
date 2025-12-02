@@ -3,12 +3,14 @@ import {
   QuestionResponse,
   StepsRequest,
   StepsResponse,
-  ConversationStep
+  ConversationStep,
+  Subject
 } from '../types';
 
 // API Configuration
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 const DEFAULT_MODEL_NAME = 'gemini-2.5-flash';
+const USER_ID = process.env.NEXT_PUBLIC_USER_ID || 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11';
 
 // API Error types
 export class ApiError extends Error {
@@ -110,13 +112,13 @@ export class ApiService {
   async generateQuestion(request: QuestionRequest): Promise<QuestionResponse> {
     const url = `${API_BASE_URL}/api/v1/generate-question`;
 
-    // For first question, send empty object with model_name. For subsequent, include previous_questions
-    const requestBody = request.previous_questions.length > 0
-      ? {
-        model_name: request.model_name || DEFAULT_MODEL_NAME,
-        previous_questions: request.previous_questions
-      }
-      : { model_name: request.model_name || DEFAULT_MODEL_NAME };
+    // Build request body with required fields
+    const requestBody: any = {
+      model_name: request.model_name || DEFAULT_MODEL_NAME,
+      user_id: request.user_id || USER_ID,
+      subject_id: request.subject_id,
+      previous_questions: request.previous_questions,
+    };
 
     try {
       const response = await makeRequest<QuestionResponse>(url, {
@@ -179,6 +181,23 @@ export class ApiService {
       }
     } catch (error) {
       console.error('Steps generation failed:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Fetch all subjects for the current user
+   */
+  async getSubjects(): Promise<Subject[]> {
+    const url = `${API_BASE_URL}/api/v1/subjects?user_id=${USER_ID}`;
+    
+    try {
+      const response = await makeRequest<Subject[]>(url, {
+        method: 'GET',
+      });
+      return response;
+    } catch (error) {
+      console.error('Failed to fetch subjects:', error);
       throw error;
     }
   }

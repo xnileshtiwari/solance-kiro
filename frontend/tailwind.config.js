@@ -19,6 +19,8 @@ module.exports = {
       fontFamily: {
         'nunito': ['var(--font-nunito)', 'sans-serif'],
         'lora': ['var(--font-lora)', 'serif'],
+        'ibm-plex-sans': ['var(--font-ibm-plex-sans)', 'sans-serif'],
+        'ibm-plex-mono': ['var(--font-ibm-plex-mono)', 'monospace'],
       },
       animation: {
         'float': 'float 25s infinite alternate',

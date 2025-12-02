@@ -18,7 +18,7 @@ export function useTopicNavigation(): UseTopicNavigationReturn {
 
   const handleTopicSubmit = useCallback((topic: string) => {
     setErrorMessage(null);
-    
+
     if (!topic.trim()) {
       setErrorMessage('Please enter a topic to get started.');
       return;
@@ -30,21 +30,13 @@ export function useTopicNavigation(): UseTopicNavigationReturn {
       return;
     }
 
-    // Start transition to learning interface
-    setIsTransitioning(true);
-    
-    // Simulate smooth transition delay
-    setTimeout(() => {
-      try {
-        // Navigate to the learning interface
-        router.push(`/learn?topic=${encodeURIComponent(topic)}`);
-      } catch (error) {
-        console.error('Navigation error:', error);
-        setErrorMessage('Failed to navigate to learning interface. Please try again.');
-      } finally {
-        setIsTransitioning(false);
-      }
-    }, 800);
+    // Navigate instantly without delay
+    try {
+      router.push(`/learn?topic=${encodeURIComponent(topic)}`);
+    } catch (error) {
+      console.error('Navigation error:', error);
+      setErrorMessage('Failed to navigate to learning interface. Please try again.');
+    }
   }, [router]);
 
   const clearError = useCallback(() => {

@@ -80,10 +80,12 @@ async def health_check():
 # Import and include API endpoints
 from src.api.endpoints.questions import router as questions_router
 from src.api.endpoints.steps import router as steps_router
+from src.api.endpoints.subjects import router as subjects_router
 
 # Include API endpoints
 app.include_router(questions_router)
 app.include_router(steps_router)
+app.include_router(subjects_router)
 
 if __name__ == "__main__":
     import uvicorn

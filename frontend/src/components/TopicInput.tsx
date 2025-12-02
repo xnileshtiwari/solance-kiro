@@ -5,10 +5,9 @@ import { ArrowRight } from '@phosphor-icons/react';
 
 interface TopicInputProps {
   onSubmit: (topic: string) => void;
-  placeholder?: string;
 }
 
-export default function TopicInput({ onSubmit, placeholder = "What do you want to learn today?" }: TopicInputProps) {
+export default function TopicInput({ onSubmit }: TopicInputProps) {
   const [topic, setTopic] = useState('');
   const [showToast, setShowToast] = useState(false);
 
@@ -45,7 +44,6 @@ export default function TopicInput({ onSubmit, placeholder = "What do you want t
           type="text"
           value={topic}
           onChange={handleInputChange}
-          placeholder={placeholder}
           className="omnibar-input"
           autoComplete="off"
         />

@@ -20,6 +20,8 @@ class PreviousQuestion(BaseModel):
 class QuestionRequest(BaseModel):
     """Request model for question generation endpoint."""
     model_name: str
+    user_id: str
+    subject_id: str
     previous_questions: List[PreviousQuestion] = []
 
 
@@ -43,6 +45,7 @@ class StepsRequest(BaseModel):
 class QuestionResponse(BaseModel):
     """Response model for question generation endpoint."""
     question: str
+    level: int
 
 
 class StepResponse(BaseModel):
@@ -63,3 +66,32 @@ class ErrorResponse(BaseModel):
     """Response model for API errors."""
     error: str
     detail: str
+
+
+# Task 3: Request/Response models for subjects endpoint
+class SubjectMeta(BaseModel):
+    display_name: str
+    subject: str
+    description: str
+    created_by: str
+    public: bool = False
+
+
+class SubjectCurriculumItem(BaseModel):
+    level: int
+    name: str
+    concepts: List[str]
+    question_style: str
+
+
+class SubjectCreate(BaseModel):
+    meta: SubjectMeta
+    curriculum: List[SubjectCurriculumItem]
+
+
+class Subject(BaseModel):
+    subject_id: str
+    display_name: Optional[str] = None
+    subject: Optional[str] = None
+    description: Optional[str] = None
+    curriculum_concepts: List[str] = []

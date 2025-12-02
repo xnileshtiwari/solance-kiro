@@ -31,7 +31,8 @@ export default function ApiLearnPage() {
     addQuestionToHistory,
     resetSession,
     markSessionComplete,
-    clearError
+    clearError,
+    currentLevel
   } = useApiLearningSession();
 
   const { validateAnswer } = useAnswerValidation();
@@ -59,7 +60,7 @@ export default function ApiLearnPage() {
       clearError();
 
       // Try to generate a question via API
-      generateNewQuestion().then(() => {
+      generateNewQuestion(topic).then(() => {
         setIsInitializing(false);
       }).catch(() => {
         setIsInitializing(false);
@@ -184,7 +185,7 @@ export default function ApiLearnPage() {
 
     // Generate new question
     try {
-      await generateNewQuestion();
+      await generateNewQuestion(topic!);
     } finally {
       setIsLoadingNewQuestion(false);
     }
@@ -201,7 +202,7 @@ export default function ApiLearnPage() {
 
     clearError();
     setIsInitializing(true);
-    generateNewQuestion().then(() => {
+    generateNewQuestion(topic!).then(() => {
       setIsInitializing(false);
     }).catch(() => {
       setIsInitializing(false);
@@ -274,7 +275,8 @@ export default function ApiLearnPage() {
       <div className="w-full px-4 py-6">
         <ProblemHeader
           question={session.currentQuestion || "Loading question..."}
-          missionNumber={1}
+          missionNumber={currentLevel}
+          missionLabel="Level"
         />
 
 

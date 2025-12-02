@@ -1,6 +1,17 @@
+// Subject Types
+export interface Subject {
+  subject_id: string;
+  display_name: string;
+  subject: string;
+  description: string;
+  curriculum_concepts: string[];
+}
+
 // API Request/Response Types
 export interface QuestionRequest {
   model_name: string;
+  user_id: string;
+  subject_id: string;
   previous_questions: PreviousQuestion[];
 }
 
@@ -12,6 +23,7 @@ export interface PreviousQuestion {
 
 export interface QuestionResponse {
   question: string;
+  level: number;
 }
 
 export interface StepsRequest {

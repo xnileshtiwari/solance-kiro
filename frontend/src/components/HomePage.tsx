@@ -1,16 +1,17 @@
 'use client';
 
-import { Lightbulb, Target, Trophy } from '@phosphor-icons/react';
+import { Lightbulb, Target, Trophy, ArrowClockwise } from '@phosphor-icons/react';
+import { useRouter } from 'next/navigation';
 import Navigation from './Navigation';
-import TopicInput from './TopicInput';
-import TopicTags from './TopicTags';
-import { useTopicNavigation } from '../hooks/useTopicNavigation';
+import SubjectCard, { SubjectCardSkeleton } from './SubjectCard';
+import { useSubjects } from '../hooks/useSubjects';
 
 export default function HomePage() {
-  const { isTransitioning, errorMessage, handleTopicSubmit, clearError } = useTopicNavigation();
+  const { subjects, isLoading, error: subjectsError, refetch } = useSubjects();
+  const router = useRouter();
 
-  const handleTagClick = (topic: string) => {
-    handleTopicSubmit(topic);
+  const handleSubjectClick = (subjectId: string) => {
+    router.push(`/learn/${subjectId}`);
   };
 
   return (
@@ -41,83 +42,48 @@ export default function HomePage() {
           Solance smooths out the learning curve with an adaptive path that evolves with you.
         </p>
 
-        {/* Topic Input Section */}
-        <div className="w-full flex flex-col items-center mb-8">
-          <div className="w-full max-w-xl mx-auto">
-            <TopicInput 
-              onSubmit={handleTopicSubmit}
-              placeholder={isTransitioning ? "Starting your learning journey..." : "e.g., Linear Equations, Polynomials, Factoring..."}
-            />
+        {/* Available Subjects Section */}
+        <div className="mb-16 w-full max-w-2xl mx-auto">
+          <div className="text-center mb-6">
           </div>
-          
-          {/* Error Message */}
-          {errorMessage && (
-            <div className="mt-4 p-4 bg-orange-50 border border-orange-200 rounded-2xl text-orange-800 text-sm max-w-xl">
-              {errorMessage}
-              <button 
-                onClick={clearError}
-                className="ml-2 text-orange-600 hover:text-orange-800 font-semibold"
-              >
-                ✕
-              </button>
-            </div>
-          )}
 
-          {/* Transition Loading State */}
-          {isTransitioning && (
-            <div className="mt-4 text-stone-500 text-sm">
-              <div className="inline-flex items-center gap-2">
-                <div className="w-4 h-4 border-2 border-stone-300 border-t-stone-600 rounded-full animate-spin"></div>
-                Preparing your personalized learning experience...
+          {/* Subjects Grid */}
+          <div className="space-y-3">
+            {isLoading ? (
+              <>
+                <SubjectCardSkeleton />
+                <SubjectCardSkeleton />
+              </>
+            ) : subjectsError ? (
+              <div className="text-center p-6 bg-orange-50 border border-orange-200 rounded-2xl">
+                <p className="text-orange-800 mb-3">{subjectsError}</p>
+                <button
+                  onClick={refetch}
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-xl hover:bg-orange-600 transition-colors"
+                >
+                  <ArrowClockwise weight="bold" className="w-4 h-4" />
+                  Try Again
+                </button>
               </div>
-            </div>
-          )}
+            ) : subjects.length === 0 ? (
+              <div className="text-center p-6 bg-stone-50 border border-stone-200 rounded-2xl">
+                <p className="text-stone-500">No subjects available yet.</p>
+                <p className="text-sm text-stone-400 mt-1">Check back soon!</p>
+              </div>
+            ) : (
+              subjects.map((subject) => (
+                <SubjectCard
+                  key={subject.subject_id}
+                  subject={subject}
+                  onClick={handleSubjectClick}
+                />
+              ))
+            )}
+          </div>
         </div>
-
-        {/* Available Topics Section */}
-        {!isTransitioning && (
-          <div className="mb-16 w-full flex flex-col items-center">
-            {/* Current Support - Highlighted */}
-            <div className="mb-6 text-center">
-              <p className="text-sm font-semibold text-stone-500 uppercase tracking-wide mb-3">
-                Start Learning Now
-              </p>
-              <button
-                onClick={() => handleTagClick('Algebra')}
-                className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-orange-500 to-yellow-500 text-white font-bold text-lg rounded-2xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200"
-              >
-                <span>📐</span>
-                Algebra
-                <span className="text-xs bg-white/20 px-2 py-1 rounded-full">Available Now</span>
-              </button>
-            </div>
-
-            {/* Coming Soon Topics */}
-            <div className="flex flex-col items-center gap-3 mt-8">
-              <p className="text-xs font-semibold text-stone-400 uppercase tracking-wide">
-                Coming Soon
-              </p>
-              <div className="flex flex-wrap justify-center gap-3">
-                {['Calculus', 'Physics', 'Chemistry', 'Programming'].map((topic, index) => (
-                  <div
-                    key={index}
-                    className="px-4 py-2 bg-stone-100 text-stone-400 rounded-xl text-sm font-medium cursor-not-allowed"
-                    title="Coming soon!"
-                  >
-                    {topic}
-                  </div>
-                ))}
-              </div>
-              <p className="text-xs text-stone-400 mt-2">
-                More subjects on the way! 🚀
-              </p>
-            </div>
-          </div>
-        )}
 
         {/* Step Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mb-16">
-          {/* Step 1 */}
           <div className="hero-card p-8 text-center step-item">
             <div className="step-icon bg-yellow-100 text-yellow-500 mx-auto">
               <Lightbulb weight="fill" />
@@ -130,7 +96,6 @@ export default function HomePage() {
             </p>
           </div>
 
-          {/* Step 2 */}
           <div className="hero-card p-8 text-center step-item">
             <div className="step-icon bg-purple-100 text-purple-500 mx-auto">
               <Target weight="fill" />
@@ -143,7 +108,6 @@ export default function HomePage() {
             </p>
           </div>
 
-          {/* Step 3 */}
           <div className="hero-card p-8 text-center step-item">
             <div className="step-icon bg-pink-100 text-pink-500 mx-auto">
               <Trophy weight="fill" />

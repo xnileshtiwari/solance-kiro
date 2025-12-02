@@ -4,21 +4,27 @@ import { StepData } from '../hooks/useStepProgression';
 // Mock algebra problems for testing
 export const mockAlgebraProblems: QuestionResponse[] = [
   {
-    question: "Solve for x: 2x + 5 = 13"
+    question: "Solve for x: 2x + 5 = 13",
+    level: 1
   },
   {
-    question: "Simplify: 3(x + 4) - 2x"
+    question: "Simplify: 3(x + 4) - 2x",
+    level: 1
   },
   {
-    question: "Solve for y: 4y - 7 = 2y + 9"
+    question: "Solve for y: 4y - 7 = 2y + 9",
+    level: 1
   },
   {
-    question: "Factor: x² + 5x + 6"
+    question: "Factor: x² + 5x + 6",
+    level: 1
   },
   {
-    question: "Solve the system: x + y = 8, 2x - y = 1"
+    question: "Solve the system: x + y = 8, 2x - y = 1",
+    level: 1
   }
 ];
+
 
 // Mock step data for each problem
 export const mockStepData: Record<string, StepData[]> = {
