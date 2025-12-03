@@ -51,15 +51,15 @@ const getSubjectColors = (subjectName: string) => {
 
 // Skeleton loader for subject cards
 const SubjectCardSkeleton = () => (
-    <div className="subject-card-skeleton">
-        <div className="flex flex-col h-full">
-            <div className="w-14 h-14 rounded-2xl bg-stone-200/60 animate-pulse mb-4" />
+    <div className="subject-card-skeleton h-full min-h-[280px]">
+        <div className="flex flex-col h-full w-full">
+            <div className="w-14 h-14 rounded-2xl bg-stone-200/60 animate-pulse mb-6" />
             <div className="h-7 w-3/4 bg-stone-200/60 rounded-lg animate-pulse mb-3" />
-            <div className="space-y-2 mb-4 flex-grow">
+            <div className="space-y-2 mb-6 flex-grow">
                 <div className="h-4 bg-stone-200/60 rounded animate-pulse w-full" />
                 <div className="h-4 bg-stone-200/60 rounded animate-pulse w-4/5" />
             </div>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2 mt-auto">
                 <div className="h-7 w-16 bg-stone-200/60 rounded-full animate-pulse" />
                 <div className="h-7 w-20 bg-stone-200/60 rounded-full animate-pulse" />
             </div>
@@ -80,25 +80,25 @@ const SubjectCard = ({ subject }: { subject: Subject }) => {
 
     return (
         <Link href={`/learn/${subject.subject_id}`} className="group block h-full">
-            <div className={`subject-card bg-gradient-to-br ${colors.bg} !border-transparent hover:!border-accent-coral`}>
-                <div className="flex flex-col">
+            <div className={`subject-card h-full min-h-[280px] flex flex-col justify-between bg-gradient-to-br ${colors.bg} !border-transparent hover:!border-accent-coral hover:shadow-lg transition-all duration-300`}>
+                <div className="flex flex-col flex-grow">
                     {/* Icon */}
-                    <div className={`subject-icon ${colors.iconBg} ${colors.accent}`}>
+                    <div className={`subject-icon ${colors.iconBg} ${colors.accent} mb-6`}>
                         <Icon size={28} weight="fill" />
                     </div>
 
                     {/* Content */}
-                    <div className="mt-4">
-                        <h3 className="text-xl font-bold text-text-coffee mb-2 group-hover:text-accent-coral">
+                    <div className="mb-4">
+                        <h3 className="text-xl font-bold text-text-coffee mb-2 group-hover:text-accent-coral transition-colors">
                             {subject.display_name}
                         </h3>
-                        <p className="text-sm text-stone-500 leading-relaxed line-clamp-2">
+                        <p className="text-sm text-stone-500 leading-relaxed line-clamp-3 h-[4.5em]">
                             {subject.description}
                         </p>
                     </div>
 
                     {/* Tags */}
-                    <div className="flex flex-wrap gap-2 mt-4">
+                    <div className="flex flex-wrap gap-2 mb-6">
                         {visibleTags.map((concept, index) => (
                             <span key={index} className="concept-tag">
                                 {concept}
@@ -116,12 +116,12 @@ const SubjectCard = ({ subject }: { subject: Subject }) => {
                             </button>
                         )}
                     </div>
+                </div>
 
-                    {/* Action */}
-                    <div className="flex items-center gap-2 mt-6 text-text-coffee font-bold text-sm group-hover:text-accent-coral">
-                        <span>Start Learning</span>
-                        <ArrowRight size={18} weight="bold" />
-                    </div>
+                {/* Action */}
+                <div className="flex items-center gap-2 text-text-coffee font-bold text-sm group-hover:text-accent-coral mt-auto pt-4 border-t border-stone-200/50">
+                    <span>Start Learning</span>
+                    <ArrowRight size={18} weight="bold" />
                 </div>
             </div>
         </Link>
@@ -178,7 +178,7 @@ export default function SubjectsPage() {
             <main className="flex-grow px-4 md:px-8 py-12 max-w-7xl mx-auto w-full">
                 {/* Header Section */}
                 <div className="mb-12">
-                    <div className="inline-flex items-center gap-2 bg-white/60 backdrop-blur-sm text-text-coffee px-4 py-2 rounded-full text-sm font-bold mb-6 border border-white/80">
+                    <div className="inline-flex items-center gap-2 bg-white/60 backdrop-blur-sm text-text-coffee px-4 py-2 rounded-full text-sm font-bold mb-6 border border-white/80 shadow-sm">
                         <Sparkle size={16} weight="fill" className="text-accent-sun" />
                         Choose Your Path
                     </div>
@@ -198,7 +198,7 @@ export default function SubjectsPage() {
                 )}
 
                 {/* Subjects Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 items-start">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
                     {isLoading || isAuthLoading ? (
                         <>
                             <SubjectCardSkeleton />
@@ -209,43 +209,39 @@ export default function SubjectsPage() {
                             <SubjectCardSkeleton />
                         </>
                     ) : (
-                        subjects.map((subject) => (
-                            <SubjectCard key={subject.subject_id} subject={subject} />
-                        ))
-                    )}
+                        <>
+                            {subjects.map((subject) => (
+                                <SubjectCard key={subject.subject_id} subject={subject} />
+                            ))}
 
-                    {/* Add New Subject Card */}
-                    {!isLoading && !isAuthLoading && (
-                        <Link href="/studio" className="group block">
-                            <div className="subject-card bg-stone-50 !border-2 !border-dashed !border-stone-200 hover:!border-accent-coral hover:bg-orange-50/50">
-                                <div className="flex flex-col">
-                                    {/* Icon */}
-                                    <div className="subject-icon bg-stone-100 !text-stone-400 group-hover:!bg-accent-coral group-hover:!text-white">
-                                        <Plus size={28} weight="bold" />
-                                    </div>
+                            {/* Add New Subject Card */}
+                            <Link href="/studio" className="group block h-full">
+                                <div className="subject-card h-full min-h-[280px] flex flex-col justify-between bg-stone-50 !border-2 !border-dashed !border-stone-200 hover:!border-accent-coral hover:bg-orange-50/50 transition-all duration-300">
+                                    <div className="flex flex-col flex-grow">
+                                        {/* Icon */}
+                                        <div className="subject-icon bg-stone-100 !text-stone-400 group-hover:!bg-accent-coral group-hover:!text-white mb-6 transition-colors">
+                                            <Plus size={28} weight="bold" />
+                                        </div>
 
-                                    {/* Content */}
-                                    <div className="mt-4">
-                                        <h3 className="text-xl font-bold text-text-coffee mb-2 group-hover:text-accent-coral">
-                                            Add New Subject
-                                        </h3>
-                                        <p className="text-sm text-stone-500 leading-relaxed line-clamp-2">
-                                            Create a custom curriculum and share your knowledge.
-                                        </p>
-                                    </div>
-
-                                    {/* Placeholder for tags area to match height */}
-                                    <div className="flex flex-wrap gap-2 mt-4 min-h-[32px]">
+                                        {/* Content */}
+                                        <div className="mb-4">
+                                            <h3 className="text-xl font-bold text-text-coffee mb-2 group-hover:text-accent-coral transition-colors">
+                                                Add New Subject
+                                            </h3>
+                                            <p className="text-sm text-stone-500 leading-relaxed line-clamp-3 h-[4.5em]">
+                                                Create a custom curriculum and share your knowledge with the world.
+                                            </p>
+                                        </div>
                                     </div>
 
                                     {/* Action */}
-                                    <div className="flex items-center gap-2 mt-6 text-text-coffee font-bold text-sm group-hover:text-accent-coral">
+                                    <div className="flex items-center gap-2 text-text-coffee font-bold text-sm group-hover:text-accent-coral mt-auto pt-4 border-t border-stone-200/50">
                                         <span>Get Started</span>
                                         <ArrowRight size={18} weight="bold" />
                                     </div>
                                 </div>
-                            </div>
-                        </Link>
+                            </Link>
+                        </>
                     )}
                 </div>
 

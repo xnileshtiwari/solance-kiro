@@ -190,12 +190,33 @@ export class ApiService {
    * Fetch all subjects for the current user
    */
   async getSubjects(): Promise<Subject[]> {
+    const CACHE_KEY = 'cached_subjects';
+
+    // Check cache first
+    if (typeof window !== 'undefined') {
+      const cached = localStorage.getItem(CACHE_KEY);
+      if (cached) {
+        try {
+          return JSON.parse(cached);
+        } catch (e) {
+          console.error('Failed to parse cached subjects', e);
+          localStorage.removeItem(CACHE_KEY);
+        }
+      }
+    }
+
     const url = `${API_BASE_URL}/api/v1/subjects?user_id=${USER_ID}`;
 
     try {
       const response = await makeRequest<Subject[]>(url, {
         method: 'GET',
       });
+
+      // Update cache
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(CACHE_KEY, JSON.stringify(response));
+      }
+
       return response;
     } catch (error) {
       console.error('Failed to fetch subjects:', error);
@@ -214,6 +235,12 @@ export class ApiService {
         method: 'POST',
         body: JSON.stringify(subjectData),
       });
+
+      // Invalidate cache on new subject creation
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('cached_subjects');
+      }
+
       return response;
     } catch (error) {
       console.error('Failed to create subject:', error);

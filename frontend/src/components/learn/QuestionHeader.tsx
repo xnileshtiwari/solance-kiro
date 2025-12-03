@@ -1,5 +1,9 @@
 'use client';
 
+import ReactMarkdown from 'react-markdown';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+
 interface QuestionHeaderProps {
     question: string | null;
     currentLevel: number;
@@ -43,20 +47,27 @@ export function QuestionHeader({ question, currentLevel, isLoading }: QuestionHe
                 </svg>
                 Level {currentLevel}
             </div>
-            <h1
-                className={`font-semibold text-stone-900 leading-relaxed ${
-                    question.length > 100 ? 'text-xl md:text-2xl' :
-                    question.length > 50 ? 'text-2xl md:text-3xl' :
-                    'text-3xl md:text-4xl'
-                }`}
+            <div
+                className={`font-semibold text-stone-900 leading-relaxed ${question.length > 100 ? 'text-xl md:text-2xl' :
+                        question.length > 50 ? 'text-2xl md:text-3xl' :
+                            'text-3xl md:text-4xl'
+                    } [&>p]:inline [&>p]:m-0`}
                 style={{
                     fontFamily: 'var(--font-ibm-plex-mono), monospace',
                     letterSpacing: '-0.02em',
                     lineHeight: '1.5'
                 }}
             >
-                {question}
-            </h1>
+                <ReactMarkdown
+                    remarkPlugins={[remarkMath]}
+                    rehypePlugins={[rehypeKatex]}
+                    components={{
+                        p: ({ node, ...props }) => <p style={{ display: 'inline' }} {...props} />
+                    }}
+                >
+                    {question}
+                </ReactMarkdown>
+            </div>
         </div>
     );
 }
