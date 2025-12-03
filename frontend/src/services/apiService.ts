@@ -8,7 +8,7 @@ import {
 } from '../types';
 
 // API Configuration
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 const DEFAULT_MODEL_NAME = 'gemini-2.5-flash';
 const USER_ID = process.env.NEXT_PUBLIC_USER_ID || 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11';
 
@@ -55,6 +55,7 @@ async function makeRequest<T>(
       ...options,
       headers: {
         'Content-Type': 'application/json',
+        'X-API-Key': process.env.INTERNAL_API_KEY || '',
         ...options.headers,
       },
     });
