@@ -200,3 +200,14 @@ curl -X POST "http://localhost:8000/api/v1/subjects" \
   ]
 }'
 
+
+
+
+curl -X POST http://localhost:8080/api/v1/grade-answer \
+  -H "Content-Type: application/json" \
+  -H "X-API-Key: INPUT" \
+  -d '{
+    "model_name": "gemini-2.5-pro",
+    "question": "Solve for x: 2x + 4 = 10",
+    "student_answer": "3"
+  }'

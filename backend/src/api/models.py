@@ -95,3 +95,18 @@ class Subject(BaseModel):
     subject: Optional[str] = None
     description: Optional[str] = None
     curriculum_concepts: List[str] = []
+
+
+# Task 4: Request/Response models for grading endpoint
+class GradingRequest(BaseModel):
+    """Request model for grading endpoint."""
+    model_name: str
+    question: str
+    student_answer: str
+
+
+class GradingResponse(BaseModel):
+    """Response model for grading endpoint."""
+    marks: int
+    correction: str
+    remarks: List[str]

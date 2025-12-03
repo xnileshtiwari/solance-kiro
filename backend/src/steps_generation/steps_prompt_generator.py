@@ -101,11 +101,6 @@ When user types ```:end``` immediately end the step generation and move to the f
         <input>{"question": "Formulate a question that probes the assumption: 'Free food increases productivity.'"}</input>
         <output>{"type": "step", "next_step": "To formulate a probing question, we first need to identify the exact link the author is making. What is the author assuming occurs between 'eating food' and 'working hard'?"}</output>
     </case>
-
-    <case subject="Critical_Thinking_Direct_Answer_Correct">
-        <input>{"question": "What is the capital of France?", "student_answer": "Paris"}</input>
-        <output>{"type": "final_answer", "marks": 10, "tip": "**Bien joué!** Paris is correct.", "remarks": ["Fact retrieval successful"]}</output>
-    </case>
 </examples>
 
 <task>

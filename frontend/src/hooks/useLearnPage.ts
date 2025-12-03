@@ -152,17 +152,16 @@ export function useLearnPage(subjectId: string) {
         clearError();
 
         try {
-            const response = await apiService.generateSteps({
+            const response = await apiService.gradeAnswer({
                 model_name: modelName,
                 question: session.currentQuestion,
                 student_answer: answer
             });
 
-            if (response.step_number === -1) {
-                handleSessionComplete(response.marks || 0, response.remarks || [], response.tip);
-            }
+            // Use the grading response to complete the session
+            handleSessionComplete(response.marks, response.remarks, response.correction);
         } catch (err) {
-            console.error('Failed to submit normal mode answer:', err);
+            console.error('Failed to submit solo mode answer:', err);
         }
     };
 
@@ -194,7 +193,7 @@ export function useLearnPage(subjectId: string) {
         }
 
         const newMode = mode === 'normal' ? 'assist' : 'normal';
-        
+
         // When switching from solo to co-pilot
         if (mode === 'normal' && newMode === 'assist') {
             // If we have a pending step from before, restore it

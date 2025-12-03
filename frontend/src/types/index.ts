@@ -56,6 +56,19 @@ export interface LearningSession {
   isComplete: boolean;
 }
 
+// Grading API Types (Solo Mode)
+export interface GradingRequest {
+  model_name: string;
+  question: string;
+  student_answer: string;
+}
+
+export interface GradingResponse {
+  marks: number;
+  correction: string;
+  remarks: string[];
+}
+
 // UI Component Types
 export interface Step {
   id: number;

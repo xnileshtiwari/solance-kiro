@@ -107,14 +107,16 @@ async def health_check():
 from src.api.endpoints.questions import router as questions_router
 from src.api.endpoints.steps import router as steps_router
 from src.api.endpoints.subjects import router as subjects_router
+from src.api.endpoints.grading import router as grading_router
 
 # We add the dependency here!
-# This protects /questions, /steps, and /subjects, but leaves /health open.
+# This protects /questions, /steps, /subjects, and /grading, but leaves /health open.
 protected_deps = [Depends(verify_api_key)]
 
 app.include_router(questions_router, dependencies=protected_deps)
 app.include_router(steps_router, dependencies=protected_deps)
 app.include_router(subjects_router, dependencies=protected_deps)
+app.include_router(grading_router, dependencies=protected_deps)
 
 if __name__ == "__main__":
     import uvicorn

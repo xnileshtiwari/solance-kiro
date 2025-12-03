@@ -4,7 +4,9 @@ import {
   StepsRequest,
   StepsResponse,
   ConversationStep,
-  Subject
+  Subject,
+  GradingRequest,
+  GradingResponse
 } from '../types';
 
 // API Configuration
@@ -182,6 +184,31 @@ export class ApiService {
       }
     } catch (error) {
       console.error('Steps generation failed:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Grade a student's answer (Solo Mode)
+   */
+  async gradeAnswer(request: GradingRequest): Promise<GradingResponse> {
+    const url = `${API_BASE_URL}/api/v1/grade-answer`;
+
+    const requestBody = {
+      model_name: request.model_name || DEFAULT_MODEL_NAME,
+      question: request.question,
+      student_answer: request.student_answer,
+    };
+
+    try {
+      const response = await makeRequest<GradingResponse>(url, {
+        method: 'POST',
+        body: JSON.stringify(requestBody),
+      });
+
+      return response;
+    } catch (error) {
+      console.error('Grading failed:', error);
       throw error;
     }
   }
