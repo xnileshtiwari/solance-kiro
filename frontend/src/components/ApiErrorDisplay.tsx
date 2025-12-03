@@ -1,107 +1,45 @@
 'use client';
 
-import { useState } from 'react';
-import { ApiError, NetworkError } from '../services';
+import React from 'react';
 
 interface ApiErrorDisplayProps {
-  error: string | Error | null;
+  error: string;
   onRetry?: () => void;
-  onFallback?: () => void;
   onDismiss?: () => void;
   showRetry?: boolean;
-  className?: string;
 }
 
-export function ApiErrorDisplay({ 
-  error, 
-  onRetry, 
-  onFallback, 
-  onDismiss,
-  showRetry = true,
-  className = '' 
-}: ApiErrorDisplayProps) {
-  const [isRetrying, setIsRetrying] = useState(false);
-
-  if (!error) return null;
-
-  const getErrorMessage = (error: string | Error): string => {
-    if (typeof error === 'string') return error;
-    if (error instanceof NetworkError) {
-      return 'Unable to connect to the server. Please check your internet connection.';
-    }
-    if (error instanceof ApiError) {
-      if (error.status === 503) {
-        return 'The service is temporarily unavailable. Please try again in a few moments.';
-      }
-      if (error.status === 429) {
-        return 'Too many requests. Please wait a moment before trying again.';
-      }
-      return error.message || 'An error occurred while communicating with the server.';
-    }
-    return error.message || 'An unexpected error occurred.';
-  };
-
-  const getErrorIcon = (error: string | Error): string => {
-    if (typeof error === 'string') return '⚠️';
-    if (error instanceof NetworkError) return '🌐';
-    if (error instanceof ApiError) {
-      if (error.status === 503) return '🔧';
-      if (error.status === 429) return '⏱️';
-    }
-    return '❌';
-  };
-
-  const handleRetry = async () => {
-    if (!onRetry) return;
-    
-    setIsRetrying(true);
-    try {
-      await onRetry();
-    } finally {
-      setIsRetrying(false);
-    }
-  };
-
+export function ApiErrorDisplay({ error, onRetry, onDismiss, showRetry = true }: ApiErrorDisplayProps) {
   return (
-    <div className={`bg-red-50 border border-red-200 rounded-2xl p-6 ${className}`}>
-      <div className="flex items-start space-x-4">
-        <div className="text-2xl">{getErrorIcon(error)}</div>
-        <div className="flex-1">
-          <h3 className="text-lg font-semibold text-red-800 mb-2">
-            Something went wrong
-          </h3>
-          <p className="text-red-700 mb-4">
-            {getErrorMessage(error)}
-          </p>
-          <div className="flex space-x-3">
-            {onRetry && showRetry && (
-              <button
-                onClick={handleRetry}
-                disabled={isRetrying}
-                className="bg-red-600 hover:bg-red-700 disabled:bg-red-400 text-white font-medium py-2 px-4 rounded-xl transition-colors duration-200"
-              >
-                {isRetrying ? 'Retrying...' : 'Try Again'}
-              </button>
-            )}
-            {onFallback && (
-              <button
-                onClick={onFallback}
-                className="bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded-xl transition-colors duration-200"
-              >
-                Use Offline Mode
-              </button>
-            )}
-            {onDismiss && (
-              <button
-                onClick={onDismiss}
-                className="bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-xl transition-colors duration-200"
-              >
-                Dismiss
-              </button>
-            )}
-          </div>
+    <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start gap-3">
+      <div className="flex-shrink-0">
+        <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <div className="flex-1">
+        <p className="text-sm text-red-700">{error}</p>
+        <div className="mt-2 flex gap-2">
+          {showRetry && onRetry && (
+            <button
+              onClick={onRetry}
+              className="text-sm font-medium text-red-600 hover:text-red-800 underline"
+            >
+              Try again
+            </button>
+          )}
+          {onDismiss && (
+            <button
+              onClick={onDismiss}
+              className="text-sm font-medium text-gray-500 hover:text-gray-700"
+            >
+              Dismiss
+            </button>
+          )}
         </div>
       </div>
     </div>
   );
 }
+
+export default ApiErrorDisplay;

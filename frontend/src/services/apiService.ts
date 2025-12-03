@@ -190,7 +190,7 @@ export class ApiService {
    */
   async getSubjects(): Promise<Subject[]> {
     const url = `${API_BASE_URL}/api/v1/subjects?user_id=${USER_ID}`;
-    
+
     try {
       const response = await makeRequest<Subject[]>(url, {
         method: 'GET',
@@ -198,6 +198,24 @@ export class ApiService {
       return response;
     } catch (error) {
       console.error('Failed to fetch subjects:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Create a new subject
+   */
+  async createSubject(subjectData: any): Promise<any> {
+    const url = `${API_BASE_URL}/api/v1/subjects`;
+
+    try {
+      const response = await makeRequest<any>(url, {
+        method: 'POST',
+        body: JSON.stringify(subjectData),
+      });
+      return response;
+    } catch (error) {
+      console.error('Failed to create subject:', error);
       throw error;
     }
   }

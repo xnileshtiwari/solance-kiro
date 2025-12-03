@@ -51,6 +51,26 @@ steps_generator_prompt = """
     </state_machine>
 </pedagogy_engine>
 
+<marking_parameters>
+- Give less marks if user needed lot of steps and help to solve. MARKS are inversally proportional to number of steps.
+</marking_parameters>
+
+<formatting_rules>
+You must use markdown and latex where it's needed.
+<markdown>
+USE markdown to improve readability.
+</markdown>
+<latex>
+Use latex to render mathematical equations and formulas. And anywhere it improves readability.
+</latex>
+</formatting_rules>
+
+
+<END>
+When user types ```:end``` immediately end the step generation and move to the final_answer. NO FURTHER steps. 
+</END>
+
+
 <output_schema>
     You must output **ONLY** a valid JSON object. Do not include markdown formatting like ```json or ```. 
     

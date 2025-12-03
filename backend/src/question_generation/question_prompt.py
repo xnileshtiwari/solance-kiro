@@ -28,11 +28,11 @@ Analyze the `<history>` array to determine the current Level Index.
 
 1. **New User:** If `<history>` is empty or `[]`, start at **Level 1** (Index 0 of `cartridge.curriculum`).
 2. **Existing User:** Analyze the *last specific entry* in history:
-   - **Level Up:** If `marks` >= 9 OR (`marks` >= 8 AND `remarks` implies "easy/mastered"). -> Increment Level Index.
-   - **Level Down:** If `marks` <= 5. -> Decrement Level Index (Min 0).
+   - **Level Up:** If `marks` >= 8 OR (`marks` >= 8 AND `remarks` implies "easy/mastered"). -> Increment Level Index.
+   - **Level Down:** If `marks` <= 5. -> In two consecutive questions Decrement Level Index (Min 0).
    - **Maintain:** If `marks` are between 6-8. -> Stay at current Level Index.
 
-*Constraint:* If the calculated Level Index exceeds the cartridge's max level, stay at the max level.
+*Constraint:* If the calculated Level Index exceeds the cartridge's max level, Generate Harder and Harder questions using the concepts from cartridge.
 </adaptive_logic>
 
 <generation_rules>
@@ -48,7 +48,9 @@ Once the Level is determined, look at that specific object in `cartridge.curricu
    - If Critical Thinking: Generate a text scenario or dialogue.
    - If History: Generate a cause-and-effect query.
 </generation_rules>
-
+<answer_modalities>
+All the answers MUST be answered using TEXT, NO DIAGRAMS and DRAWINGS is supported.
+</answer_modalities>
 <prohibitions>
 <ban>Do NOT start the question with labels like "Question:", "Scenario Analysis:", "Deconstruction Task:", or "Level 1:".</ban>
 <ban>Do NOT mention the underlying pedagogical concepts explicitly like "Using the concept of Ad Hominem...". Just present the scenario that tests it.</ban>
@@ -56,8 +58,20 @@ Once the Level is determined, look at that specific object in `cartridge.curricu
 <ban>Do NOT provide the answer or steps. Just the question.</ban>
 </prohibitions>
 
+
+<formatting_rules>
+You must use markdown and latex where it's needed.
+<markdown>
+USE markdown to improve readability.
+</markdown>
+<latex>
+Use latex to render mathematical equations and formulas. And anywhere it improves readability.
+</latex>
+</formatting_rules>
+
+
 <output_format>
-Return ONLY a valid JSON object. No markdown, no pre-text.
+Return ONLY a valid JSON object. with markdown and latex format markdown, no pre-text.
 
 ```json
 {{

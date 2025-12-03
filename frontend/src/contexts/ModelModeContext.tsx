@@ -14,7 +14,7 @@ const ModelModeContext = createContext<ModelModeContextType | undefined>(undefin
 
 const MODEL_MAP: Record<ModelMode, string> = {
   turbo: 'gemini-2.5-flash',
-  deep: 'gemini-2.5-pro-preview-05-06',
+  deep: 'gemini-2.5-pro',
 };
 
 export function ModelModeProvider({ children }: { children: ReactNode }) {

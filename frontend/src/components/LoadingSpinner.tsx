@@ -27,7 +27,7 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
     'Crafting your personalized challenge',
     'Analyzing your learning path',
     'Preparing adaptive questions',
-    'Setting up your algebra journey'
+    'Setting up your journey'
   ];
 
   useEffect(() => {

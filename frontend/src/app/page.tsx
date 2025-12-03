@@ -48,10 +48,12 @@ export default function HomePage() {
           ) : (
             <button
               onClick={() => handleTagClick('Algebra')}
-              className="inline-flex items-center gap-3 px-10 py-4 bg-gradient-to-r from-orange-500 to-yellow-500 text-white font-bold text-lg rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200"
+              className="inline-flex items-center gap-3 px-12 py-4 bg-[#3D3D3D] hover:bg-orange-500 text-white font-bold text-xl rounded-full shadow-[0_8px_16px_rgba(0,0,0,0.15)] hover:shadow-[0_12px_24px_rgba(205,127,110,0.3)] transition-all duration-300"
             >
-              <span className="text-2xl">🚀</span>
               Start Your Journey
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
             </button>
           )}
         </div>

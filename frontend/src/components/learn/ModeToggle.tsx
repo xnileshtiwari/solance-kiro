@@ -3,9 +3,10 @@
 interface ModeToggleProps {
     mode: 'normal' | 'assist';
     onToggle: () => void;
+    disableSolo?: boolean;
 }
 
-export function ModeToggle({ mode, onToggle }: ModeToggleProps) {
+export function ModeToggle({ mode, onToggle, disableSolo = false }: ModeToggleProps) {
     return (
         <div className="mt-6 flex justify-center">
             <div className="relative inline-flex items-center bg-stone-200 rounded-full p-1">
@@ -21,17 +22,20 @@ export function ModeToggle({ mode, onToggle }: ModeToggleProps) {
                 
                 {/* Buttons */}
                 <button
-                    onClick={() => mode !== 'normal' && onToggle()}
-                    className="relative z-10 flex items-center gap-2 px-6 py-2.5 rounded-full transition-all duration-300"
+                    onClick={() => mode !== 'normal' && !disableSolo && onToggle()}
+                    disabled={disableSolo && mode !== 'normal'}
+                    className={`relative z-10 flex items-center gap-2 px-6 py-2.5 rounded-full transition-all duration-300 ${
+                        disableSolo && mode !== 'normal' ? 'cursor-not-allowed opacity-50' : ''
+                    }`}
                 >
                     <svg 
-                        className={`w-5 h-5 transition-colors duration-300 ${mode === 'normal' ? 'text-amber-500' : 'text-stone-400'}`} 
+                        className={`w-5 h-5 transition-colors duration-300 ${mode === 'normal' ? 'text-amber-500' : disableSolo ? 'text-stone-300' : 'text-stone-400'}`} 
                         fill="currentColor" 
                         viewBox="0 0 24 24"
                     >
                         <path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z" />
                     </svg>
-                    <span className={`text-sm font-semibold transition-colors duration-300 ${mode === 'normal' ? 'text-stone-900' : 'text-stone-500'}`}>
+                    <span className={`text-sm font-semibold transition-colors duration-300 ${mode === 'normal' ? 'text-stone-900' : disableSolo ? 'text-stone-300' : 'text-stone-500'}`}>
                         Solo
                     </span>
                 </button>

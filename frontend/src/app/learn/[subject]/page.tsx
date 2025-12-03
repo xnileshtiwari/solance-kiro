@@ -37,6 +37,8 @@ function LearnPageContent() {
         insight,
         currentScore,
         mode,
+        hasSubmittedStepInCopilot,
+        showModeToast,
         handleAnswerSubmit,
         handleNormalModeSubmit,
         handleNextChallenge,
@@ -111,8 +113,17 @@ function LearnPageContent() {
                     />
 
                     {session.currentQuestion && !isInitializing && !isLoadingNewQuestion && (
-                        <ModeToggle mode={mode} onToggle={handleModeToggle} />
+                        <ModeToggle 
+                            mode={mode} 
+                            onToggle={handleModeToggle}
+                            disableSolo={hasSubmittedStepInCopilot}
+                        />
                     )}
+
+                    {/* Mode Switch Toast */}
+                    <div className={`mode-switch-toast ${showModeToast ? 'show' : ''}`}>
+                        You can only switch modes from a new question
+                    </div>
 
                     {((completedSteps.length > 0 || currentStep || isLoading || mode === 'normal') && 
                       !isInitializing && !isLoadingNewQuestion && session.currentQuestion) && (
@@ -179,6 +190,29 @@ function LearnPageContent() {
                     100% {
                         background-position: -200% 0;
                     }
+                }
+
+                .mode-switch-toast {
+                    position: fixed;
+                    top: 20px;
+                    left: 50%;
+                    transform: translateX(-50%) translateY(-100px);
+                    background-color: #4A4036;
+                    color: white;
+                    padding: 12px 24px;
+                    border-radius: 12px;
+                    font-size: 14px;
+                    font-weight: 600;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                    opacity: 0;
+                    transition: all 0.3s ease;
+                    z-index: 1000;
+                    pointer-events: none;
+                }
+
+                .mode-switch-toast.show {
+                    transform: translateX(-50%) translateY(0);
+                    opacity: 1;
                 }
             `}</style>
         </div>

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Subject } from '../types';
-import { apiService } from '../services';
+import { apiService } from '../services/apiService';
 
 interface UseSubjectsReturn {
   subjects: Subject[];
@@ -23,9 +23,9 @@ export function useSubjects(): UseSubjectsReturn {
     try {
       const data = await apiService.getSubjects();
       setSubjects(data);
-    } catch (err) {
+    } catch (err: any) {
       console.error('Failed to fetch subjects:', err);
-      setError('Failed to load subjects. Please try again.');
+      setError(err?.message || 'Failed to load subjects. Please try again.');
     } finally {
       setIsLoading(false);
     }

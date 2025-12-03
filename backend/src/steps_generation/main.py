@@ -12,6 +12,7 @@ load_dotenv()
 
 def generate(model, input):
     print("Steps generator input " + input)
+    print("Model " + model)
 
     client = genai.Client(
         api_key=os.environ.get("GOOGLE_API_KEY"),
@@ -94,8 +95,11 @@ def generate(model, input):
         model=model,
         contents=contents,
         config=generate_content_config,
+
     )
-    print("Steps generator output " + str(response.candidates[0].content.parts[0].function_call.args))
+
+    print("=" * 20 + "Step generator output" + "=" * 20)
+    print(response.candidates[0].content.parts[0].function_call.args)
 
 
     return response.candidates[0].content.parts[0].function_call.args

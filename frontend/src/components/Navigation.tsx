@@ -69,14 +69,18 @@ export default function Navigation() {
 
   return (
     <nav className="w-full px-6 py-6 flex items-center justify-between relative z-50">
-      {/* Empty div for spacing */}
-      <div className="w-10" />
+
 
       {/* Logo/Brand - Centered and Clickable */}
-      <Link href="/" className="flex items-center gap-2 text-2xl font-extrabold tracking-tight text-stone-800 hover:text-stone-700 transition-colors cursor-pointer">
-        <Sparkle size={32} weight="fill" className="text-stone-800" />
-        Solance
-      </Link>
+      <div className="flex items-center gap-8">
+        <Link href="/" className="flex items-center gap-2 text-2xl font-extrabold tracking-tight text-stone-800 hover:text-stone-700 transition-colors cursor-pointer">
+          <Sparkle size={32} weight="fill" className="text-stone-800" />
+          Solance
+        </Link>
+        <Link href="/studio" className="text-sm font-bold text-stone-500 hover:text-accent-coral transition-colors">
+          Studio
+        </Link>
+      </div>
 
       {/* Profile Section */}
       <div className="relative" ref={dropdownRef}>

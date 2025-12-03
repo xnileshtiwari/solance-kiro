@@ -2,7 +2,6 @@
 
 import { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { isAlgebraTopic, getNonAlgebraMessage } from '../utils/topicValidation';
 
 interface UseTopicNavigationReturn {
   isTransitioning: boolean;
@@ -24,11 +23,6 @@ export function useTopicNavigation(): UseTopicNavigationReturn {
       return;
     }
 
-    // Check if topic is algebra-related (hackathon constraint)
-    if (!isAlgebraTopic(topic)) {
-      setErrorMessage(getNonAlgebraMessage(topic));
-      return;
-    }
 
     // Navigate instantly without delay
     try {

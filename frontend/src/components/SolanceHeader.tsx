@@ -87,6 +87,9 @@ export default function SolanceHeader() {
         <Link href="/subjects" className={`nav-item ${isActive('/subjects') || isActive('/learn') ? 'active' : ''}`}>
           Subjects
         </Link>
+        <Link href="/studio" className={`nav-item ${isActive('/studio') ? 'active' : ''}`}>
+          Studio
+        </Link>
       </nav>
 
       {/* Controls */}

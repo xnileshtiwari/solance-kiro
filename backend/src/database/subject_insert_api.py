@@ -14,7 +14,7 @@ supabase: Client = create_client(url, key)
 
 def generate_subject_id():
     """6-char lower-alphanumeric ID (letters+digits)."""
-    return 'CHEMISTRY'
+    return ''.join(random.choices(string.ascii_lowercase + string.digits, k=6))
 
 
 def insert_module(module_json: dict, table_name: str = "subject-cartridge", max_attempts: int = 5):
@@ -40,7 +40,6 @@ def insert_module(module_json: dict, table_name: str = "subject-cartridge", max_
         payload = {
             "subject_id": subject_id,
             "payload": module_json,
-            "public": module_json["meta"]["public"],
         }
 
         # perform insert

@@ -2,10 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Book, MathOperations, Atom, Globe, ChartLine, Palette, ArrowRight, Sparkle } from '@phosphor-icons/react';
+import { Book, MathOperations, Atom, Globe, ChartLine, Palette, ArrowRight, Sparkle, Plus } from '@phosphor-icons/react';
 import { apiService } from '../../services/apiService';
 import { Subject } from '../../types';
-import { ApiErrorDisplay } from '../../components';
 import { useAuth } from '../../hooks/useAuth';
 
 // Subject icon mapping
@@ -80,17 +79,17 @@ const SubjectCard = ({ subject }: { subject: Subject }) => {
         : subject.curriculum_concepts.slice(0, 3);
 
     return (
-        <Link href={`/learn/${subject.subject_id}`} className="group block">
-            <div className={`subject-card h-full bg-gradient-to-br ${colors.bg} !border-transparent hover:!border-accent-coral`}>
-                <div className="flex flex-col h-full">
+        <Link href={`/learn/${subject.subject_id}`} className="group block h-full">
+            <div className={`subject-card bg-gradient-to-br ${colors.bg} !border-transparent hover:!border-accent-coral`}>
+                <div className="flex flex-col">
                     {/* Icon */}
                     <div className={`subject-icon ${colors.iconBg} ${colors.accent}`}>
                         <Icon size={28} weight="fill" />
                     </div>
 
                     {/* Content */}
-                    <div className="flex-grow mt-4">
-                        <h3 className="text-xl font-bold text-text-coffee mb-2 group-hover:text-accent-coral transition-colors">
+                    <div className="mt-4">
+                        <h3 className="text-xl font-bold text-text-coffee mb-2 group-hover:text-accent-coral">
                             {subject.display_name}
                         </h3>
                         <p className="text-sm text-stone-500 leading-relaxed line-clamp-2">
@@ -119,9 +118,9 @@ const SubjectCard = ({ subject }: { subject: Subject }) => {
                     </div>
 
                     {/* Action */}
-                    <div className="flex items-center gap-2 mt-6 text-text-coffee font-bold text-sm group-hover:text-accent-coral transition-colors">
+                    <div className="flex items-center gap-2 mt-6 text-text-coffee font-bold text-sm group-hover:text-accent-coral">
                         <span>Start Learning</span>
-                        <ArrowRight size={18} weight="bold" className="transition-transform group-hover:translate-x-1" />
+                        <ArrowRight size={18} weight="bold" />
                     </div>
                 </div>
             </div>
@@ -187,13 +186,19 @@ export default function SubjectsPage() {
 
                 {/* Error State */}
                 {error && (
-                    <div className="mb-8">
-                        <ApiErrorDisplay error={error} onRetry={handleRetry} showRetry={true} />
+                    <div className="mb-8 p-6 bg-red-50 border border-red-200 rounded-2xl">
+                        <p className="text-red-600 mb-4">{error}</p>
+                        <button
+                            onClick={handleRetry}
+                            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                        >
+                            Retry
+                        </button>
                     </div>
                 )}
 
                 {/* Subjects Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 items-start">
                     {isLoading || isAuthLoading ? (
                         <>
                             <SubjectCardSkeleton />
@@ -207,6 +212,40 @@ export default function SubjectsPage() {
                         subjects.map((subject) => (
                             <SubjectCard key={subject.subject_id} subject={subject} />
                         ))
+                    )}
+
+                    {/* Add New Subject Card */}
+                    {!isLoading && !isAuthLoading && (
+                        <Link href="/studio" className="group block">
+                            <div className="subject-card bg-stone-50 !border-2 !border-dashed !border-stone-200 hover:!border-accent-coral hover:bg-orange-50/50">
+                                <div className="flex flex-col">
+                                    {/* Icon */}
+                                    <div className="subject-icon bg-stone-100 !text-stone-400 group-hover:!bg-accent-coral group-hover:!text-white">
+                                        <Plus size={28} weight="bold" />
+                                    </div>
+
+                                    {/* Content */}
+                                    <div className="mt-4">
+                                        <h3 className="text-xl font-bold text-text-coffee mb-2 group-hover:text-accent-coral">
+                                            Add New Subject
+                                        </h3>
+                                        <p className="text-sm text-stone-500 leading-relaxed line-clamp-2">
+                                            Create a custom curriculum and share your knowledge.
+                                        </p>
+                                    </div>
+
+                                    {/* Placeholder for tags area to match height */}
+                                    <div className="flex flex-wrap gap-2 mt-4 min-h-[32px]">
+                                    </div>
+
+                                    {/* Action */}
+                                    <div className="flex items-center gap-2 mt-6 text-text-coffee font-bold text-sm group-hover:text-accent-coral">
+                                        <span>Get Started</span>
+                                        <ArrowRight size={18} weight="bold" />
+                                    </div>
+                                </div>
+                            </div>
+                        </Link>
                     )}
                 </div>
 

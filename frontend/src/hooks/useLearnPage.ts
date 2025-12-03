@@ -28,9 +28,12 @@ export function useLearnPage(subjectId: string) {
     const [insight, setInsight] = useState<{ title: string; description: string } | undefined>();
     const [currentScore, setCurrentScore] = useState<number>(0);
     const [mode, setMode] = useState<'normal' | 'assist'>('normal');
+    const [hasSubmittedStepInCopilot, setHasSubmittedStepInCopilot] = useState(false);
+    const [showModeToast, setShowModeToast] = useState(false);
 
     const questionInitialized = useRef(false);
     const stepInitialized = useRef(false);
+    const pendingStepRef = useRef<BlockStep | null>(null);
 
     const handleSessionComplete = (marks: number, remarks: string[], tip?: string) => {
         markSessionComplete();
@@ -101,6 +104,11 @@ export function useLearnPage(subjectId: string) {
             return { isCorrect: false, feedback: 'No current step available' };
         }
 
+        // Mark that user has submitted at least one step in co-pilot mode
+        if (mode === 'assist') {
+            setHasSubmittedStepInCopilot(true);
+        }
+
         const conversationStep: ConversationStep = {
             step: currentStep.id,
             your_prompt: currentStep.prompt,
@@ -118,6 +126,7 @@ export function useLearnPage(subjectId: string) {
         ]);
 
         setCurrentStep(null);
+        pendingStepRef.current = null;
 
         const updatedHistory = [...session.conversationHistory, conversationStep];
         const stepResponse = await getNextStep(updatedHistory);
@@ -161,6 +170,8 @@ export function useLearnPage(subjectId: string) {
         setShowSuccessModal(false);
         setCurrentStep(null);
         setCompletedSteps([]);
+        setHasSubmittedStepInCopilot(false);
+        pendingStepRef.current = null;
 
         questionInitialized.current = false;
         stepInitialized.current = false;
@@ -175,9 +186,41 @@ export function useLearnPage(subjectId: string) {
     };
 
     const handleModeToggle = () => {
-        const newMode = mode === 'normal' ? 'assist' : 'normal';
-        setMode(newMode);
+        // Prevent switching to solo mode if user has submitted a step in co-pilot mode
+        if (mode === 'assist' && hasSubmittedStepInCopilot) {
+            setShowModeToast(true);
+            setTimeout(() => setShowModeToast(false), 3000);
+            return;
+        }
 
+        const newMode = mode === 'normal' ? 'assist' : 'normal';
+        
+        // When switching from solo to co-pilot
+        if (mode === 'normal' && newMode === 'assist') {
+            // If we have a pending step from before, restore it
+            if (pendingStepRef.current) {
+                setCurrentStep(pendingStepRef.current);
+            }
+            setMode(newMode);
+            // Don't reset stepInitialized if we have a pending step
+            if (!pendingStepRef.current) {
+                stepInitialized.current = false;
+            }
+            return;
+        }
+
+        // When switching from co-pilot to solo (before submitting first step)
+        if (mode === 'assist' && newMode === 'normal') {
+            // Save the current step to restore later if needed
+            if (currentStep) {
+                pendingStepRef.current = currentStep;
+            }
+            setCurrentStep(null);
+            setMode(newMode);
+            return;
+        }
+
+        setMode(newMode);
         setCurrentStep(null);
         setCompletedSteps([]);
         stepInitialized.current = false;
@@ -214,6 +257,8 @@ export function useLearnPage(subjectId: string) {
         insight,
         currentScore,
         mode,
+        hasSubmittedStepInCopilot,
+        showModeToast,
         handleAnswerSubmit,
         handleNormalModeSubmit,
         handleNextChallenge,
