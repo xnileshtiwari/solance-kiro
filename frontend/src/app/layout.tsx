@@ -4,6 +4,7 @@ import "./globals.css";
 import 'katex/dist/katex.min.css';
 import { FloatingBlobs, ErrorBoundary, SolanceHeader } from "../components";
 import { ModelModeProvider } from "../contexts";
+import NextTopLoader from 'nextjs-toploader';
 
 const nunito = Nunito({
   variable: "--font-nunito",
@@ -44,6 +45,17 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${nunito.variable} ${lora.variable} ${ibmPlexSans.variable} ${ibmPlexMono.variable} min-h-screen flex flex-col relative`}>
         <ModelModeProvider>
+          <NextTopLoader
+            color="#FF6B6B"
+            initialPosition={0.08}
+            crawlSpeed={200}
+            height={3}
+            crawl={true}
+            showSpinner={false}
+            easing="ease"
+            speed={200}
+            shadow="0 0 10px #FF6B6B,0 0 5px #FF6B6B"
+          />
           <FloatingBlobs />
           <SolanceHeader />
           <ErrorBoundary>

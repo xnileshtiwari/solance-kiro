@@ -140,7 +140,11 @@ export default function StudioPage() {
         }
     };
 
-    if (!isAuthenticated && !isAuthLoading) {
+    if (isAuthLoading) {
+        return null; // Or a loading spinner if preferred, but null prevents flash before redirect
+    }
+
+    if (!isAuthenticated) {
         return null;
     }
 

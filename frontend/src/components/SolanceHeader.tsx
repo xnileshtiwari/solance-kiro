@@ -84,33 +84,39 @@ export default function SolanceHeader() {
         <Link href="/" className={`nav-item ${isActive('/') && pathname === '/' ? 'active' : ''}`}>
           Home
         </Link>
-        <Link href="/subjects" className={`nav-item ${isActive('/subjects') || isActive('/learn') ? 'active' : ''}`}>
-          Subjects
-        </Link>
-        <Link href="/studio" className={`nav-item ${isActive('/studio') ? 'active' : ''}`}>
-          Studio
-        </Link>
+        {user && (
+          <>
+            <Link href="/subjects" className={`nav-item ${isActive('/subjects') || isActive('/learn') ? 'active' : ''}`}>
+              Subjects
+            </Link>
+            <Link href="/studio" className={`nav-item ${isActive('/studio') ? 'active' : ''}`}>
+              Studio
+            </Link>
+          </>
+        )}
       </nav>
 
       {/* Controls */}
       <div className="controls-area">
-        {/* Model Toggle */}
-        <div className="model-toggle">
-          <div
-            className={`toggle-option fast-mode ${mode === 'turbo' ? 'active' : ''}`}
-            onClick={() => handleModeChange('turbo')}
-          >
-            <Lightning weight="bold" size={14} />
-            <span className="toggle-text">Turbo</span>
+        {/* Model Toggle - Only show when authenticated */}
+        {user && (
+          <div className="model-toggle">
+            <div
+              className={`toggle-option fast-mode ${mode === 'turbo' ? 'active' : ''}`}
+              onClick={() => handleModeChange('turbo')}
+            >
+              <Lightning weight="bold" size={14} />
+              <span className="toggle-text">Turbo</span>
+            </div>
+            <div
+              className={`toggle-option ${mode === 'deep' ? 'active' : ''}`}
+              onClick={() => handleModeChange('deep')}
+            >
+              <Star weight="fill" size={14} />
+              <span className="toggle-text">Deep</span>
+            </div>
           </div>
-          <div
-            className={`toggle-option ${mode === 'deep' ? 'active' : ''}`}
-            onClick={() => handleModeChange('deep')}
-          >
-            <Star weight="fill" size={14} />
-            <span className="toggle-text">Deep</span>
-          </div>
-        </div>
+        )}
 
         {/* Profile */}
         <div className="relative" ref={dropdownRef}>

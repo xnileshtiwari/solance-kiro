@@ -22,16 +22,18 @@ export function useAuth(options: UseAuthOptions = {}) {
             try {
                 const { data: { session } } = await supabase.auth.getSession();
                 setUser(session?.user ?? null);
-                
+
                 if (requireAuth && !session?.user) {
                     router.push(redirectTo);
+                    return; // Don't set loading to false, let the redirect happen
                 }
+                setIsLoading(false);
             } catch (error) {
                 console.error('Auth check failed:', error);
                 if (requireAuth) {
                     router.push(redirectTo);
+                    return;
                 }
-            } finally {
                 setIsLoading(false);
             }
         };
@@ -41,7 +43,7 @@ export function useAuth(options: UseAuthOptions = {}) {
         const { data: { subscription } } = supabase.auth.onAuthStateChange(
             async (event, session) => {
                 setUser(session?.user ?? null);
-                
+
                 if (requireAuth && !session?.user) {
                     router.push(redirectTo);
                 }
