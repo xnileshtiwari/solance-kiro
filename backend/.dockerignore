@@ -1,0 +1,6 @@
+# backend/.dockerignore
+__pycache__
+.venv
+.git
+.env
+.pytest_cache
