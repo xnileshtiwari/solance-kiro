@@ -32,6 +32,28 @@ You will output a structured JSON object called a "Cartridge" that defines the c
 - **Description:** Brief description of the level's focus.
 </cartridge_guidelines>
 
+<user>
+When the USER is at level 0, Then when generating cartridge, DO NOT ask any information. Formulate the questions in a way that contains answers or solutions.
+
+Example:
+    The user wants to learn french.  and level == 0:
+    <question_style>
+English: I have a book.
+French: J’ai un livre.
+
+English: You have a pen.
+French: Tu as un stylo.
+
+English: She has a car.
+French: Elle a une voiture.
+
+How would you say in French: I have a pen?
+    </question_style>
+
+    - DO the similar things for other subjects that starts with level 0. 
+    - Provide detailed description of the question style.    
+</user>
+
 <tools>
 - `conversation`: Use this to ask questions or provide feedback to the user.
 - `cartridge_schema`: Use this ONLY when you are ready to create the final course structure.
