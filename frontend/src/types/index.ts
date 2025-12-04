@@ -77,3 +77,61 @@ export interface Step {
   hint_response: string;
   success_msg: string;
 }
+
+// Studio Chat Types
+export interface StudioMessage {
+  id: string;
+  role: 'user' | 'assistant';
+  content: string;
+  timestamp: Date;
+  file?: {
+    name: string;
+    type: string;
+    uri?: string;
+  };
+}
+
+export interface StudioHistory {
+  user: string;
+  model: string;
+}
+
+export interface StudioFile {
+  uri: string;
+  mime_type: string;
+}
+
+export interface StudioRequest {
+  model_name: string;
+  user_input: string;
+  history: StudioHistory[];
+  file?: StudioFile;
+}
+
+export interface CartridgeMeta {
+  display_name: string;
+  subject: string;
+  description: string;
+  language: string;
+  public: boolean;
+}
+
+export interface CurriculumLevel {
+  level: number;
+  name: string;
+  description: string;
+  concepts: string[];
+  question_style: string;
+}
+
+export interface CartridgeSchema {
+  curriculum: CurriculumLevel[];
+  meta: CartridgeMeta;
+}
+
+export interface StudioResponse {
+  tool: 'conversation' | 'cartridge_schema';
+  args: CartridgeSchema | { message: string };
+  text: string | null;
+  error: string | null;
+}

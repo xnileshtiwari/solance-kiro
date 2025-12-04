@@ -121,18 +121,20 @@ curl -X POST "http://localhost:8000/api/v1/subjects" \
 
 
 
-curl -X GET "http://localhost:8000/api/v1/subjects?user_id=YOUR_USER_ID"
+curl -X GET "http://localhost:8080/api/v1/subjects?user_id=YOUR_USER_ID"
 
 
 
 
-curl -X POST "http://localhost:8000/api/v1/subjects" \
+curl -X POST "http://localhost:8080/api/v1/subjects" \
   -H "Content-Type: application/json" \
+  -H "X-API-Key: 123aosbbilep8975451248hsubns" \ 
   -d '{
   "meta": {
     "subject": "Cognitive Science",
-    "display_name": "Applied Rationality & Decision Making",
+    "display_name": "bbbbb",
     "description": "A tactical guide to not being fooled by data, people, or your own brain. Focuses on high-stakes decision making.",
+    "language": "English",
     "created_by": "647ced21-aa26-400a-b272-84a6547cfcde",
     "public": true
   },
@@ -140,6 +142,7 @@ curl -X POST "http://localhost:8000/api/v1/subjects" \
     {
       "level": 1,
       "name": "The Trap of the Visible (Selection Effects)",
+      "description": "The Trap of the Visible (Selection Effects)", 
       "concepts": [
         "Survivorship Bias (Ignoring the failures that aren'\''t visible)",
         "The Halo Effect (Assuming competence in one area equals competence in all)",
@@ -150,6 +153,7 @@ curl -X POST "http://localhost:8000/api/v1/subjects" \
     {
       "level": 2,
       "name": "Verbal Judo (Defeating Manipulation)",
+      "description": "Verbal Judo (Defeating Manipulation)",  
       "concepts": [
         "The False Dilemma (You are given two bad options, identify the third)",
         "The Strawman (Spotting when your argument was distorted)",
@@ -160,6 +164,7 @@ curl -X POST "http://localhost:8000/api/v1/subjects" \
     {
       "level": 3,
       "name": "Statistical Self-Defense (Numbers Lie)",
+      "description": "Statistical Self-Defense (Numbers Lie)",  
       "concepts": [
         "Base Rate Neglect (Confusing probability with accuracy)",
         "Relative vs. Absolute Risk (Marketing manipulation)",
@@ -170,6 +175,7 @@ curl -X POST "http://localhost:8000/api/v1/subjects" \
     {
       "level": 4,
       "name": "The Sunk Cost & Opportunity Cost",
+      "description": "The Sunk Cost & Opportunity Cost",  
       "concepts": [
         "Sunk Cost Fallacy (Ignoring past investment for future value)",
         "Opportunity Cost (The invisible cost of the path not taken)",
@@ -180,6 +186,7 @@ curl -X POST "http://localhost:8000/api/v1/subjects" \
     {
       "level": 5,
       "name": "Second-Order Thinking (Systems)",
+      "description": "Second-Order Thinking (Systems)", 
       "concepts": [
         "The Cobra Effect (Perverse Incentives)",
         "Chesterton'\''s Fence (Don'\''t remove a rule until you know why it exists)",
@@ -190,6 +197,7 @@ curl -X POST "http://localhost:8000/api/v1/subjects" \
     {
       "level": 6,
       "name": "Inversion & First Principles",
+      "description": "Inversion & First Principles",  
       "concepts": [
         "Inversion (Solving problems backwards)",
         "First Principles (Stripping away analogy)",

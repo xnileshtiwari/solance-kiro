@@ -58,6 +58,9 @@ All the answers MUST be answered using TEXT, NO DIAGRAMS and DRAWINGS is support
 <ban>Do NOT provide the answer or steps. Just the question.</ban>
 </prohibitions>
 
+<language>
+Use the language as provided in the cartridge. IF not provided use english.   
+</language>
 
 <formatting_rules>
 You must use markdown and latex where it's needed.

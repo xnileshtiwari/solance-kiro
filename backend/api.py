@@ -108,6 +108,7 @@ from src.api.endpoints.questions import router as questions_router
 from src.api.endpoints.steps import router as steps_router
 from src.api.endpoints.subjects import router as subjects_router
 from src.api.endpoints.grading import router as grading_router
+from src.api.endpoints.studio import router as studio_router
 
 # We add the dependency here!
 # This protects /questions, /steps, /subjects, and /grading, but leaves /health open.
@@ -117,6 +118,7 @@ app.include_router(questions_router, dependencies=protected_deps)
 app.include_router(steps_router, dependencies=protected_deps)
 app.include_router(subjects_router, dependencies=protected_deps)
 app.include_router(grading_router, dependencies=protected_deps)
+app.include_router(studio_router, dependencies=protected_deps)
 
 if __name__ == "__main__":
     import uvicorn

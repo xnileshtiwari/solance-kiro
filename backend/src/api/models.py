@@ -73,6 +73,7 @@ class SubjectMeta(BaseModel):
     display_name: str
     subject: str
     description: str
+    language: str   
     created_by: str
     public: bool = False
 
@@ -80,6 +81,7 @@ class SubjectMeta(BaseModel):
 class SubjectCurriculumItem(BaseModel):
     level: int
     name: str
+    description: str    
     concepts: List[str]
     question_style: str
 
@@ -110,3 +112,30 @@ class GradingResponse(BaseModel):
     marks: int
     correction: str
     remarks: List[str]
+
+
+# Task 5: Request/Response models for Studio endpoint
+class StudioFile(BaseModel):
+    uri: str
+    mime_type: str
+
+
+class StudioHistoryItem(BaseModel):
+    user: str
+    model: str
+
+
+class StudioRequest(BaseModel):
+    """Request model for Studio endpoint."""
+    model_name: str = "gemini-2.5-pro"
+    user_input: Optional[str] = None
+    history: List[StudioHistoryItem] = []
+    file: Optional[StudioFile] = None
+
+
+class StudioResponse(BaseModel):
+    """Response model for Studio endpoint."""
+    tool: Optional[str] = None
+    args: Optional[dict] = None
+    text: Optional[str] = None
+    error: Optional[str] = None

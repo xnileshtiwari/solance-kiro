@@ -288,6 +288,70 @@ export class ApiService {
       return false;
     }
   }
+
+  /**
+   * Upload a file to Gemini via our API route
+   */
+  async uploadFile(file: File): Promise<{ uri: string; mime_type: string }> {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new ApiError(
+          error.error || 'File upload failed',
+          response.status
+        );
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('File upload failed:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Generate studio response (Solance AI chatbot)
+   */
+  async studioGenerate(request: {
+    model_name?: string;
+    user_input: string;
+    history: Array<{ user: string; model: string }>;
+    file?: { uri: string; mime_type: string };
+  }): Promise<{
+    tool: 'conversation' | 'cartridge_schema';
+    args: any;
+    text: string | null;
+    error: string | null;
+  }> {
+    const url = `${API_BASE_URL}/api/v1/studio/generate`;
+
+    const requestBody = {
+      model_name: request.model_name || 'gemini-2.5-pro',
+      user_input: request.user_input,
+      history: request.history,
+      ...(request.file && { file: request.file }),
+    };
+
+    try {
+      const response = await makeRequest<any>(url, {
+        method: 'POST',
+        body: JSON.stringify(requestBody),
+      });
+
+      return response;
+    } catch (error) {
+      console.error('Studio generate failed:', error);
+      throw error;
+    }
+  }
 }
 
 // Export singleton instance

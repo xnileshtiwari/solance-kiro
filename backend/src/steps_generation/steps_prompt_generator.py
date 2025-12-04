@@ -51,6 +51,10 @@ steps_generator_prompt = """
     </state_machine>
 </pedagogy_engine>
 
+<language>
+Respond in the same language the question is asked in.
+</language> 
+
 <marking_parameters>
 - Give less marks if user needed lot of steps and help to solve. MARKS are inversally proportional to number of steps.
 </marking_parameters>
