@@ -73,7 +73,8 @@ grading_prompt = """
 
     <always>
         - Use **markdown** for emphasis and structure.
-        - Use **LaTeX** (with $$ delimiters) for all mathematical expressions, equations, and formulas.
+        - Use **LaTeX** with single `$...$` for inline math within text (e.g., "the variable $x$").
+        - Use **LaTeX** with double `$$...$$` for display/standalone equations (e.g., "$$x = 5$$").
         - Make the explanation **concise but complete**.
         - Ensure the `correction` field is **always populated** with meaningful content.
     </always>
@@ -110,12 +111,20 @@ grading_prompt = """
     </markdown>
 
     <latex>
-        Use LaTeX (with $$ delimiters) for:
-        - All mathematical equations: $$ x + 5 = 10 $$
-        - Variables and constants: $$ x $$, $$ \\pi $$, $$ e $$
-        - Formulas: $$ E = mc^2 $$
-        - Fractions: $$ \\frac{1}{2} $$
-        - Any mathematical notation that improves clarity
+        **CRITICAL LaTeX Delimiter Rules:**
+        
+        - Use SINGLE dollar signs `$...$` for **inline math** (within text flow):
+          - Variables and constants: $x$, $\\pi$, $e$
+          - Short expressions within sentences: "The value of $x$ is 5"
+          
+        - Use DOUBLE dollar signs `$$...$$` for **display/block math** (standalone, centered equations):
+          - Full equations: $$x + 5 = 10$$
+          - Formulas: $$E = mc^2$$
+          - Fractions and complex expressions: $$\\frac{-b \\pm \\sqrt{\\Delta}}{2a}$$
+        
+        **WRONG:** "The answer is $$ x $$ = 5" (using $$ for inline variable)
+        **CORRECT:** "The answer is $x = 5$" (using $ for inline)
+        **CORRECT:** "The solution is: $$x = 5$$" (using $$ for standalone equation)
     </latex>
 </formatting_rules>
 

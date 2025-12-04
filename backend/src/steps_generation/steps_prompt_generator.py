@@ -65,7 +65,15 @@ You must use markdown and latex where it's needed.
 USE markdown to improve readability.
 </markdown>
 <latex>
-Use latex to render mathematical equations and formulas. And anywhere it improves readability.
+Use LaTeX to render mathematical equations and formulas.
+
+**CRITICAL LaTeX Delimiter Rules:**
+- Use SINGLE dollar signs `$...$` for **inline math** (within text flow).
+  Example: "To isolate $x$, we need to move the $+5$."
+- Use DOUBLE dollar signs `$$...$$` for **display/block math** (standalone, centered equations).
+  Example: "$$x = \\frac{-b \\pm \\sqrt{\\Delta}}{2a}$$"
+
+**DO NOT** use `$$` for inline variables like $x$ or $\\Delta$. Only use `$$` for standalone equations.
 </latex>
 </formatting_rules>
 
@@ -98,7 +106,7 @@ When user types ```:end``` immediately end the step generation and move to the f
 <examples>
     <case subject="Math">
         <input>{"question": "Solve x + 5 = 10"}</input>
-        <output>{"type": "step", "next_step": "To get $$ x $$ by itself, we need to move the $$ +5 $$. How do we move a positive number to the other side?"}</output>
+        <output>{"type": "step", "next_step": "To get $x$ by itself, we need to move the $+5$. How do we move a positive number to the other side?"}</output>
     </case>
 
     <case subject="Critical_Thinking_Start">

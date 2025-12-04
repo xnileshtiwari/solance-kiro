@@ -68,7 +68,15 @@ You must use markdown and latex where it's needed.
 USE markdown to improve readability.
 </markdown>
 <latex>
-Use latex to render mathematical equations and formulas. And anywhere it improves readability.
+Use LaTeX to render mathematical equations and formulas. 
+
+**CRITICAL LaTeX Delimiter Rules:**
+- Use SINGLE dollar signs `$...$` for **inline math** (within text flow).
+  Example: "Find the value of $x$ where $a = 2$."
+- Use DOUBLE dollar signs `$$...$$` for **display/block math** (standalone, centered equations).
+  Example: "$$x^2 + 2x + 1 = 0$$"
+
+**DO NOT** use `$$` for inline variables like $x$. Only use `$$` for standalone equations.
 </latex>
 </formatting_rules>
 
