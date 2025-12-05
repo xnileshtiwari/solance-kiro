@@ -147,17 +147,47 @@ def generate(model, input_data):
 
     print("=" * 20 + " Studio output " + "=" * 20)
     try:
-        # Check for function call
-        if response.candidates[0].content.parts[0].function_call:
-             args = response.candidates[0].content.parts[0].function_call.args
-             func_name = response.candidates[0].content.parts[0].function_call.name
-             return {"tool": func_name, "args": args}
-        else:
-            # Fallback for text response (shouldn't happen with forced tools but good safety)
-            return {"text": response.candidates[0].content.parts[0].text}
+        # Check if we have valid candidates
+        if not response.candidates or len(response.candidates) == 0:
+            print("No candidates in response")
+            return {"error": "No response generated"}
+        
+        candidate = response.candidates[0]
+        
+        # Check if content exists
+        if not candidate.content or not candidate.content.parts:
+            print("No content parts in response")
+            return {"error": "Empty response from model"}
+        
+        # Iterate through all parts to find function call or collect text
+        text_parts = []
+        for part in candidate.content.parts:
+            # Check if this part has a function call
+            if hasattr(part, 'function_call') and part.function_call:
+                args = part.function_call.args
+                func_name = part.function_call.name
+                print("=" * 20 + " subject generated " + "=" * 20)
+                print("Function call", func_name, args)    
+                return {"tool": func_name, "args": args}
+            
+            # Collect text from this part
+            if hasattr(part, 'text') and part.text:
+                text_parts.append(part.text)
+        
+        # If no function call found, return collected text
+        if text_parts:
+            combined_text = "\n".join(text_parts)
+            print("Text response:", combined_text[:200] + "..." if len(combined_text) > 200 else combined_text)
+            return {"text": combined_text}
+        
+        # No function call and no text - return error
+        print("No function call or text in response parts")
+        return {"error": "No valid content in response"}
             
     except Exception as e:
         print(f"Error parsing response: {e}")
+        import traceback
+        traceback.print_exc()
         return {"error": str(e)}
 
 if __name__ == "__main__":

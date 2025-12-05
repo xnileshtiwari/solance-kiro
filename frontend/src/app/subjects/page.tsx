@@ -129,15 +129,18 @@ const SubjectCard = ({ subject }: { subject: Subject }) => {
 };
 
 export default function SubjectsPage() {
-    const { isLoading: isAuthLoading, isAuthenticated } = useAuth({ requireAuth: true, redirectTo: '/auth' });
+    const { user, isLoading: isAuthLoading, isAuthenticated } = useAuth({ requireAuth: true, redirectTo: '/auth' });
     const [subjects, setSubjects] = useState<Subject[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchSubjects = async () => {
+            if (!user?.id) {
+                return;
+            }
             try {
-                const data = await apiService.getSubjects();
+                const data = await apiService.getSubjects(user.id);
                 setSubjects(data);
             } catch (err) {
                 console.error('Failed to fetch subjects:', err);
@@ -147,24 +150,28 @@ export default function SubjectsPage() {
             }
         };
 
-        if (isAuthenticated) {
+        if (isAuthenticated && user?.id) {
             fetchSubjects();
         }
-    }, [isAuthenticated]);
+    }, [isAuthenticated, user?.id]);
 
     const handleRetry = () => {
         setIsLoading(true);
         setError(null);
-        apiService.getSubjects()
-            .then(data => {
-                setSubjects(data);
-                setIsLoading(false);
-            })
-            .catch(err => {
-                console.error('Failed to fetch subjects:', err);
-                setError('Failed to load subjects. Please try again later.');
-                setIsLoading(false);
-            });
+        if (user?.id) {
+            apiService.getSubjects(user.id)
+                .then(data => {
+                    setSubjects(data);
+                    setIsLoading(false);
+                })
+                .catch(err => {
+                    console.error('Failed to fetch subjects:', err);
+                    setError('Failed to load subjects. Please try again later.');
+                    setIsLoading(false);
+                });
+        } else {
+            setIsLoading(false);
+        }
     };
 
     // Don't render anything if not authenticated (will redirect)
@@ -261,5 +268,6 @@ export default function SubjectsPage() {
                 Built for the future of learning.
             </footer>
         </div>
-    );
+    );      
 }
+

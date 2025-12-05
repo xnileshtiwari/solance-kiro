@@ -12,6 +12,7 @@ from src.database.gene_question import get_subject_details
 load_dotenv()
 
 def generate(model, input_json, user_id, subject_id):
+    print("USER ID", user_id)
 
     memory = SolanceMemory(user_id, subject_id) 
     history = memory.get_history_for_llm()

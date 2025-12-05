@@ -52,9 +52,9 @@ export default function AuthPage() {
     const handleAuth = async () => {
       const urlParams = new URLSearchParams(window.location.search);
       const hasCode = urlParams.has('code');
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { user } } = await supabase.auth.getUser();
 
-      if (session) {
+      if (user) {
         window.location.href = '/learn?topic=algebra';
         return;
       }

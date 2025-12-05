@@ -12,7 +12,7 @@ import {
 // API Configuration
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 const DEFAULT_MODEL_NAME = 'gemini-2.5-flash';
-const USER_ID = process.env.NEXT_PUBLIC_USER_ID || 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11';
+
 
 // API Error types
 export class ApiError extends Error {
@@ -118,7 +118,7 @@ export class ApiService {
     // Build request body with required fields
     const requestBody: any = {
       model_name: request.model_name || DEFAULT_MODEL_NAME,
-      user_id: request.user_id || USER_ID,
+      user_id: request.user_id,
       subject_id: request.subject_id,
       previous_questions: request.previous_questions,
     };
@@ -216,8 +216,8 @@ export class ApiService {
   /**
    * Fetch all subjects for the current user
    */
-  async getSubjects(): Promise<Subject[]> {
-    const CACHE_KEY = 'cached_subjects';
+  async getSubjects(userId: string): Promise<Subject[]> {
+    const CACHE_KEY = `cached_subjects_${userId}`;
 
     // Check cache first
     if (typeof window !== 'undefined') {
@@ -232,7 +232,7 @@ export class ApiService {
       }
     }
 
-    const url = `${API_BASE_URL}/api/v1/subjects?user_id=${USER_ID}`;
+    const url = `${API_BASE_URL}/api/v1/subjects?user_id=${userId}`;
 
     try {
       const response = await makeRequest<Subject[]>(url, {
@@ -263,9 +263,17 @@ export class ApiService {
         body: JSON.stringify(subjectData),
       });
 
-      // Invalidate cache on new subject creation
+      // Invalidate all cached subjects on new subject creation
       if (typeof window !== 'undefined') {
-        localStorage.removeItem('cached_subjects');
+        // Clear all cached_subjects_* keys
+        const keysToRemove: string[] = [];
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key && key.startsWith('cached_subjects_')) {
+            keysToRemove.push(key);
+          }
+        }
+        keysToRemove.forEach(key => localStorage.removeItem(key));
       }
 
       return response;

@@ -20,10 +20,10 @@ export function useAuth(options: UseAuthOptions = {}) {
     useEffect(() => {
         const checkAuth = async () => {
             try {
-                const { data: { session } } = await supabase.auth.getSession();
-                setUser(session?.user ?? null);
+                const { data: { user }, error } = await supabase.auth.getUser();
+                setUser(user);
 
-                if (requireAuth && !session?.user) {
+                if (requireAuth && !user) {
                     router.push(redirectTo);
                     return; // Don't set loading to false, let the redirect happen
                 }

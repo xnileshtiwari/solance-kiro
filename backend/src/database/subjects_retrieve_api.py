@@ -28,6 +28,9 @@ def fetch_cartridge(user_id: str):
 
     # Step 1: Fetch all matching rows using OR filters
     # Supabase requires two separate filters combined using .or()
+    # Note: For JSONB string comparison via ->> (text extraction), values don't need JSON quoting
+    # For ->> operator, the result is text so we compare directly
+    # public is boolean stored as true/false in JSON, but ->> extracts as text "true"/"false"
     response = (
         supabase.table("subject-cartridge")
         .select("subject_id, payload")

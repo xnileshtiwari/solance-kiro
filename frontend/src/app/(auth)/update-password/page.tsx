@@ -35,11 +35,6 @@ export default function UpdatePasswordPage() {
           return;
         }
 
-        const { data: sessionData } = await supabase.auth.getSession();
-        if (sessionData?.session?.user) {
-          if (mounted) setIsSessionReady(true);
-          return;
-        }
 
         if (mounted) {
           setError("Reset link appears invalid or expired. Please request a new password reset.");

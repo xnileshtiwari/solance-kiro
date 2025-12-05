@@ -11,6 +11,8 @@ import {
 } from '../types';
 import { apiService, ApiError, NetworkError } from '../services';
 
+import { useAuth } from './useAuth';
+
 interface UseApiLearningSessionOptions {
   modelName?: string;
 }
@@ -40,7 +42,6 @@ const initialSession: LearningSession = {
   isComplete: false,
 };
 
-const USER_ID = process.env.NEXT_PUBLIC_USER_ID || 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11';
 const DEFAULT_MODEL = 'gemini-2.5-flash';
 
 export function useApiLearningSession(options: UseApiLearningSessionOptions = {}): UseApiLearningSessionReturn {
@@ -50,11 +51,19 @@ export function useApiLearningSession(options: UseApiLearningSessionOptions = {}
   const [error, setError] = useState<string | null>(null);
   const [currentLevel, setCurrentLevel] = useState<number>(1);
 
+  // Get authenticated user
+  const { user } = useAuth({ requireAuth: false });
+
   const clearError = useCallback(() => {
     setError(null);
   }, []);
 
   const generateNewQuestion = useCallback(async (subjectId: string) => {
+    if (!user?.id) {
+      setError('User not authenticated. Please sign in.');
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
 
@@ -66,7 +75,7 @@ export function useApiLearningSession(options: UseApiLearningSessionOptions = {}
 
       const request: QuestionRequest = {
         model_name: modelName,
-        user_id: USER_ID,
+        user_id: user.id,
         subject_id: subjectId,
         previous_questions: lastQuestion,
       };
@@ -100,7 +109,7 @@ export function useApiLearningSession(options: UseApiLearningSessionOptions = {}
     } finally {
       setIsLoading(false);
     }
-  }, [session.questionHistory, modelName]);
+  }, [session.questionHistory, modelName, user?.id]);
 
   const getNextStep = useCallback(async (conversationHistoryOverride?: ConversationStep[]): Promise<StepsResponse | null> => {
     if (!session.currentQuestion) {
