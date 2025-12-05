@@ -359,11 +359,8 @@ npm run dev
 
 ## 📄 License
 
-[Add your license information here]
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-## 🤝 Contributing
-
-[Add contribution guidelines here]
 
 ---
 
