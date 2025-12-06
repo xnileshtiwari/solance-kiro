@@ -10,6 +10,7 @@ export function useLearnPage(subjectId: string) {
     const {
         session,
         isLoading,
+        isAuthLoading,
         error,
         generateNewQuestion,
         getNextStep,
@@ -58,6 +59,11 @@ export function useLearnPage(subjectId: string) {
 
     // Initialize session - generate question
     useEffect(() => {
+        // Wait for auth to be resolved before attempting to generate a question
+        if (isAuthLoading) {
+            return;
+        }
+
         if (subjectId && !session.currentQuestion && !questionInitialized.current) {
             questionInitialized.current = true;
             setIsInitializing(true);
@@ -72,7 +78,7 @@ export function useLearnPage(subjectId: string) {
             });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [subjectId]);
+    }, [subjectId, isAuthLoading]);
 
     // Get first step when question is available (only in assist mode)
     useEffect(() => {

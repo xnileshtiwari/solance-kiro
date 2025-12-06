@@ -20,6 +20,7 @@ interface UseApiLearningSessionOptions {
 interface UseApiLearningSessionReturn {
   session: LearningSession;
   isLoading: boolean;
+  isAuthLoading: boolean;
   error: string | null;
   generateNewQuestion: (subjectId: string) => Promise<void>;
   getNextStep: (conversationHistoryOverride?: ConversationStep[]) => Promise<StepsResponse | null>;
@@ -52,13 +53,18 @@ export function useApiLearningSession(options: UseApiLearningSessionOptions = {}
   const [currentLevel, setCurrentLevel] = useState<number>(1);
 
   // Get authenticated user
-  const { user } = useAuth({ requireAuth: false });
+  const { user, isLoading: isAuthLoading } = useAuth({ requireAuth: false });
 
   const clearError = useCallback(() => {
     setError(null);
   }, []);
 
   const generateNewQuestion = useCallback(async (subjectId: string) => {
+    // Wait for auth to resolve - don't show error while still loading
+    if (isAuthLoading) {
+      return;
+    }
+
     if (!user?.id) {
       setError('User not authenticated. Please sign in.');
       return;
@@ -109,7 +115,7 @@ export function useApiLearningSession(options: UseApiLearningSessionOptions = {}
     } finally {
       setIsLoading(false);
     }
-  }, [session.questionHistory, modelName, user?.id]);
+  }, [session.questionHistory, modelName, user?.id, isAuthLoading]);
 
   const getNextStep = useCallback(async (conversationHistoryOverride?: ConversationStep[]): Promise<StepsResponse | null> => {
     if (!session.currentQuestion) {
@@ -214,6 +220,7 @@ export function useApiLearningSession(options: UseApiLearningSessionOptions = {}
   return {
     session,
     isLoading,
+    isAuthLoading,
     error,
     generateNewQuestion,
     getNextStep,
